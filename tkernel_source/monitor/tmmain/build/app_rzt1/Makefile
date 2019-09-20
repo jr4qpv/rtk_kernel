@@ -19,7 +19,7 @@
 # ----------------------------------------------------------------------
 #
 
-#	@(#)T-Monitor : tmmain (RZT1) 2019/09/19
+#	@(#)T-Monitor : tmmain (RZT1) 2019/09/20
 
 MACHINE = rzt1
 TETYPE = app
@@ -57,7 +57,7 @@ HEADER = $(BD)/include $(OPTSYS)/include $(BD)/monitor/include
 VER := 2.01.00
 
 # vsersion for T-Monitor
-VER_TMON := 0.50
+VER_TMON := 0.60
 
 # RZ/T1 board name
 ifeq ($(TYPE_RZT),1)
@@ -178,4 +178,5 @@ $(SRC.C):
 #|* 2017/04/10	バージョン情報のファイル名を ver_info に変更
 #|* 2017/07/11	TYPE_RZT指定(0,1)でBOARDNAMEを変更するように対応
 #|* 2018/04/06	「__TMONITOR_BUILD__」定義の追加
+#|* 2019/09/20	VER_TMON=0.60に変更
 #|

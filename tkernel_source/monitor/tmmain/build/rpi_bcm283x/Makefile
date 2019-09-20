@@ -19,7 +19,7 @@
 # ----------------------------------------------------------------------
 #
 
-#	@(#)T-Monitor : tmmain (bcm283x) 2017/11/14
+#	@(#)T-Monitor : tmmain (bcm283x) 2019/09/20
 
 MACHINE = bcm283x
 TETYPE = rpi
@@ -57,7 +57,7 @@ HEADER = $(BD)/include $(OPTSYS)/include $(BD)/monitor/include
 # ----------------------------------------------------------------------------
 
 # vsersion for rpi
-VER_RPI := 0.11
+VER_TMON := 0.60
 
 # rpi board name
 ifeq ($(TYPE_RPI),1)
@@ -79,11 +79,11 @@ VER := 2.01.00
 define VERSION
 char const Version[] = "$(VER)";
 char const * const Title[] = {
-  "T-Monitor/$(TETYPE)_$(MACHINE) Version $(VER) for $(BOARDNAME) r$(VER_RPI)",
+  "T-Monitor/$(TETYPE)_$(MACHINE) Version $(VER) for $(BOARDNAME) r$(VER_TMON)",
   0,
   "@(#)$(shell LC_TIME=C date)",
   "$(BOARDNAME)",
-  "$(VER_RPI)"
+  "$(VER_TMON)"
 };
 endef
 
@@ -185,8 +185,8 @@ $(SRC.C):
 #|  ﾘﾝｸｽｸﾘﾌﾟﾄに"../$(TETYPE)_$(MACHINE)/"のパス記述追加
 #|* 2016/04/20	Title[0]にBOARDNAME文字列と、Title[3]にBOARDNAME文字列の追加
 #|* 2016/08/08	TYPE_RPI指定を追加(1,2,3を指定)、但しﾌｫﾙﾀﾞ名による指定が優先
-#|* 2016/09/08	VER_RPI定義の追加し、起動時表示するようにTitle[0]に含めた
-#|* 2016/09/08	Title[4]にVER_RPI文字列の追加
+#|* 2016/09/08	VER_TMON定義の追加し、起動時表示するようにTitle[0]に含めた
+#|* 2016/09/08	Title[4]にVER_TMON文字列の追加
 #|* 2017/04/10	バージョン情報のファイル名を ver_info に変更
-#|* 2017/04/11	VER_RPI=0.11に変更
+#|* 2019/09/20	VER_TMON=0.60に変更
 #|
