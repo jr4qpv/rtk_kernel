@@ -10,10 +10,14 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi at 2019/04/08.
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
- *	rs.h		Serial(RS-232C) driver definition
+ *	rs.h		Serial(RS-232C) driver definition  2019/04/08
  */
 
 #ifndef __DEVICE_RS_H__
@@ -32,6 +36,9 @@ typedef enum {
 	/* Common attribute */
 	DN_PCMCIAINFO	= TDN_PCMCIAINFO,
 				/* PC card number 	data: PCMCIAInfo R */
+#if 1	/* Modified by T.Yokobayashi */
+	DN_STSEVENT		= TDN_STSEVENT,	/* Status event: RW*/
+#endif	
 	/* Individual attribute */
 	DN_RSMODE	= -100,	/* Communication mode	data: RsMode	RW */
 	DN_RSFLOW	= -101,	/* Flow control		data: RsFlow	RW */
@@ -150,3 +157,11 @@ typedef struct {
 }
 #endif
 #endif /* __DEVICE_RS_H__ */
+
+
+/*----------------------------------------------------------------------
+#|History of "rs.h"
+#|-----------------
+#|* 2019/04/08	Add DN_STSEVENT define.
+#|
+*/

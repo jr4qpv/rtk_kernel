@@ -12,6 +12,10 @@
 #
 # ----------------------------------------------------------------------
 #
+#    Modified by T.Yokobayashi at 2016/02/04.
+#
+# ----------------------------------------------------------------------
+#
 
 #
 # This software package is available for use, modification, 
@@ -46,7 +50,7 @@
 #
 
 #
-#	Makefile for gmake
+#	@(#)Makefile for gmake (lib) 2017/11/22
 #	library main (common description)
 #
 
@@ -58,6 +62,9 @@ LIB_T2EXBLD_TARGET = libtk
 # additional libraries
 LIB_TARGET += libdrvif
 
+# additional opt libraries
+OPT_LIB_TARGET = libmisc librpi
+
 # ----------------------------------------------------------------------------
 .PHONY: all clean source clean_source clean_all
 
@@ -68,6 +75,12 @@ $(LIB_TARGET):
 	$(MAKE) ; \
 	$(MAKE) install
 
+$(OPT_LIB_TARGET):
+	@echo "--------------------"
+	cd $(BD)/OPT/lib/$@/build/$(TETYPE)_$(MACHINE) ; \
+	$(MAKE) ; \
+	$(MAKE) install
+	
 $(LIB_T2EXBLD_TARGET):
 	cd ../../$@/build_t2ex/$(TETYPE)_$(MACHINE) ; \
 	$(MAKE) ; \
@@ -81,6 +94,10 @@ clean:
 	for dir in $(LIB_T2EXBLD_TARGET); do \
 		( cd $$dir/build_t2ex/$(TETYPE)_$(MACHINE) ; $(MAKE) clean clean_install ) ; \
 	done )
+	@( cd $(BD)/OPT/lib ; \
+	for dir in $(OPT_LIB_TARGET); do \
+		( cd $$dir/build/$(TETYPE)_$(MACHINE) ; $(MAKE) clean clean_install ) ; \
+	done )
 
 source:
 	cd ../../libsvc/build/$(TETYPE)_$(MACHINE) ; \
@@ -91,3 +108,11 @@ clean_source:
 	$(MAKE) clean_source
 
 clean_all: clean clean_source
+
+
+# ----------------------------------------------------------------------
+#|History of "Makefile.common"
+#|----------------------------
+#|* 2016/02/04	 Add libmisc
+#|* 2016/11/22	 Add librpi
+#| 

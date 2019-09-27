@@ -18,7 +18,7 @@
 #
 
 #
-#	@(#)Makefile (common description) 2016/07/08
+#	@(#)Makefile (common description) 2018/11/14
 #
 #	RomInfo / SYSCONF / DEVCONF
 #
@@ -26,6 +26,8 @@
 # source file dependencies (generated automatically)
 DEPS = Dependencies
 DEPENDENCIES_OUTPUT := $(DEPS)
+
+OPTSYS := $(BD)/OPT
 
 # source file path
 S	= ../../src/sysdepend/$(TETYPE)_$(MACHINE)

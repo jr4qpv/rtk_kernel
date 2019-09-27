@@ -42,7 +42,27 @@ typedef __wchar_t	wchar_t;
 #define offsetof(type, member)	( (size_t)(&((type *)0)->member) )
 #define NULL	0
 
+
+#if 1	/* wint_tコンパイルエラーの回避の為追加 */
+#ifndef	wint_t
+typedef	int			wint_t;
+#endif
+#endif
+
 #ifdef __cplusplus
 }
 #endif
 #endif /* __STDDEF_H__ */
+
+
+/*----------------------------------------------------------------------
+#|History of "stddef.h"
+#|=====================
+#|* 2017/09/07	Modified.(By T.Yokobayashi)
+#|　Newlibなどコンパイラ側の標準ライブラリーを使う場合に、
+#| 「wint_t」未定義のコンパイルエラーが発生するのでwint_tの定義を追加。
+#|  コンパイラ標準のstddef.h呼ばれる所が、このファイルが優先されて呼び出され
+#|  てしまう為に発生している。同じ名前のヘッダファイル名が使われてのは良くな
+#|  いとは思うが、根本的な回避方法がわからなかったのでここに定義した。
+#|
+*/

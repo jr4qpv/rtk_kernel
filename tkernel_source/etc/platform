@@ -26,7 +26,8 @@
 #	"Linux-i686"	: Linux x86
 #	"FreeBSD-i386"	: FreeBSDq x86
 #	"Cygwin-i686"	: Cygwin x86
-#	"mingw32-i686"	: MSYS2 mingw32 x86
+#	"mingw32-x86"	: MSYS2 mingw32 x86
+#	"mingw64-x86"	: MSYS2 mingw64 x86 
 #	"unknown"	: unknown platform
 #
 usage='usage: platform'
@@ -42,6 +43,7 @@ case $os in
   Darwin)	platform=$os-`uname -p` ;;
   CYGWIN*)	platform="Cygwin-`uname -m`" ;;
   MINGW32*)	platform="mingw32-`uname -m`" ;;
+  MINGW64*)	platform="mingw64-`uname -m`" ;;
   *)		platform=unknown ;;
 esac
 

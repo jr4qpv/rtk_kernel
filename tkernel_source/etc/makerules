@@ -12,13 +12,13 @@
 #
 # ----------------------------------------------------------------------
 #
-#     Modified by T.Yokobayashi at 2016/08/19.
+#     Modified by T.Yokobayashi. since 2017/11/22.
 #
 # ----------------------------------------------------------------------
 #
 
 #
-#	makerules
+#	@(#)makerules (tkernel) 2019/01/09
 #		for GNU make
 #
 #	common standard rules (default rules)
@@ -52,6 +52,15 @@ ifndef BD
   # default base directory
   BD := /usr/local/te
 endif
+ifdef MSYSTEM
+  # Windows path convert for msys2
+  BD := $(shell /usr/bin/cygpath -u $(BD))
+endif
+
+ifndef OPTSYS
+  # OPTsys base directory
+  OPTSYS := $(realpath $(BD)/../../..)
+endif
 
 ifndef MACHINE
   # target machine
@@ -75,13 +84,20 @@ endif
 # DRIVER_INSTALLDIR	driver install directory
 # EXE_INSTALLDIR	executable install directory
 
-SUFFIX_LIB  =
-SUFFIX_INST =
+ifeq ($(mode), debug)
+  SUFFIX_LIB  = .debug
+  SUFFIX_INST =
+else
+  SUFFIX_LIB  =
+  SUFFIX_INST =
+endif
 
 COMMONLIB = $(BD)/lib/build/$(TETYPE)_$(MACHINE)$(SUFFIX_LIB)
 LIB_INSTALLDIR = $(COMMONLIB)
 DRIVER_INSTALLDIR = $(BD)/driver/$(TETYPE)_$(MACHINE)/build
 EXE_INSTALLDIR = $(BD)/bin/$(TETYPE)_$(MACHINE)$(SUFFIX_INST)
+
+OPT_DRIVER_INSTALLDIR = $(OPTSYS)/driver/build/$(TETYPE)_$(MACHINE)
 
 # ===== common definition =====================================================
 
@@ -115,7 +131,7 @@ else
 endif
 
 ### header file ###
-HEADER		= $(BD)/include
+HEADER		= $(BD)/include $(OPTSYS)/include
 DATABOX_HEADER	= $(BD)/bappl/dbox
 
 ### install common library ###
@@ -131,6 +147,9 @@ $(EXE_INSTALLDIR)/%.so.$(LIB_VERSION): %.so.$(LIB_VERSION)
 ### install driver ###
 $(DRIVER_INSTALLDIR)/%: %
 	$(BD)/etc/backup_copy -t -d !OLD $< $(DRIVER_INSTALLDIR)
+
+$(OPT_DRIVER_INSTALLDIR)/%: %
+	$(BD)/etc/backup_copy -t -d !OLD $< $(OPT_DRIVER_INSTALLDIR)
 
 ### install executable ###
 $(EXE_INSTALLDIR)/%: %
@@ -164,3 +183,9 @@ $(LIB_INSTALLDIR)/%: %
 	$(BD)/etc/backup_copy -t -d !OLD $< $(LIB_INSTALLDIR)
 
 # =============================================================================
+#|History of "makerules"
+#|----------------------
+#|* 2017/07/10	msys2時は「$BD」変数をcygpathコマンドで変換する処理を追加。
+#|* 2018/04/11	｢OPT_DRIVER_INSTALLDIR｣定義の追加
+#|* 2018/11/13	｢OPTSYS｣定義の追加
+#|

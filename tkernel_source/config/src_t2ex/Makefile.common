@@ -50,10 +50,12 @@
 #
 
 #
-#	@(#)Makefile (common description) 2016/07/08
+#	@(#)Makefile (common description) 2018/11/14
 #
 #	RomInfo / SYSCONF / DEVCONF
 #
+
+OPTSYS := $(BD)/OPT
 
 # T2EX source file path
 S	= ../../src_t2ex/sysdepend/$(TETYPE)_$(MACHINE)

@@ -138,7 +138,10 @@ EXPORT void setupFlashLoad( W mode, UW addr[3] )
 
         /* Use the end of RAM area for working area
             if we have enough RAM, we set aside the area as large as the last sector  */
-	sa = (ramend - FROM_SECSZ) - romsize;
+	if ((ramend - FROM_SECSZ) > romsize)
+		sa = (ramend - FROM_SECSZ) - romsize;
+	else
+		sa = 0;						/* romsizeが大ぎる(ｱﾝﾀﾞﾌﾛｰさせない) */
 	if ( sa < ramtop ) sa = ramtop;
 	ofs = sa - (UW)rom->top;	/* the distance between the ROM area and RAM work area */
 
@@ -157,3 +160,12 @@ EXPORT void setupFlashLoad( W mode, UW addr[3] )
 		addr[0] = sa - ofs;			/* ROM start address */
 	}
 }
+
+
+/*----------------------------------------------------------------------
+#|History of "main.c"
+#|=======================
+#|* 2015/12/14	[tef_em1d]用の"command.c"を参考に作成。
+#|* 2017/07/14	setupFlashLoad()のsaのUW減算計算でｱﾝﾀﾞﾌﾛｰさせない処理追加。
+#|
+*/

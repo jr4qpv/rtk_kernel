@@ -11,11 +11,15 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi since 2015/12/22.
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
- *	usermain.c (usermain)
- *	User Main for debug with device drivers
+ *	@(#)usermain.c (sysmain) 2019/05/02
+ *	User Main for T-Kernel
  */
 
 #include <basic.h>
@@ -30,6 +34,7 @@ IMPORT ER SysDiskDrv( INT ac, UB *av[] );
 IMPORT ER ScreenDrv( INT ac, UB *av[] );
 IMPORT ER KbPdDrv( INT ac, UB *av[] );
 IMPORT ER LowKbPdDrv( INT ac, UB *av[] );
+
 
 #ifdef DEBUG_SAMPLE
 /*-----------------------------------------------------------------------------
@@ -158,6 +163,9 @@ EXPORT	INT	usermain( void )
 #ifdef DEBUG_SAMPLE
 	/* Debug sample */
 	debug_sample();
+#else
+	/* User mainstart */
+	tm_putstring((UB*)"usermain.\n");
 #endif
 
 	/* System shutdown */
@@ -186,3 +194,11 @@ EXPORT	INT	usermain( void )
 
 	return 0;
 }
+
+
+/*----------------------------------------------------------------------
+#|History of "usermain.c"
+#|-----------------------
+#|* 2015/12/22	It's modified.
+#|
+*/

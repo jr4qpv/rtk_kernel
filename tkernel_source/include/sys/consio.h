@@ -10,10 +10,14 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi since 2018/10/10.
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
- *	@(#)consio.h (sys)
+ *	@(#)consio.h (sys) 2019/04/08
  *
  *	Console I/O
  */
@@ -80,6 +84,17 @@ IMPORT int RS_ioctl( int req, int arg );
 #define IXANY		0x02U	/* Output restarted if any character
 				   received during IXON */
 #define IXOFF		0x04U	/* XON/XOFF input flow control */
+
+#if 1	/* [By T.Yokobayashi] */
+#define	CRDELETE	0x70U	/* CR input delete mode */
+#define	STSEVENT	0x85U	/* 状態イベント(T-Kernelイベントフラグ )*/
+
+/* State event */
+#define	TSE_READOK	0x00000001	/* 読み出し可（データあり）*/
+#define	TSE_WRITEOK	0x00000002	/* 書き込み可 */
+#define	TSE_ERROR	0x00000004	/* エラー発生 */
+#define	TSE_STATE	0x00000008	/* その他の状態変化 */
+#endif	
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -161,3 +176,13 @@ IMPORT ER console_ctl(W port, W req, W arg);
 }
 #endif
 #endif /* __SYS_CONSIO_H__ */
+
+
+/*----------------------------------------------------------------------
+#|History of "consio.h"
+#|---------------------
+#|* 2018/10/10	Add CRDELETE(0x70U) define.(By T.Yokobayashi)
+#|* 2019/02/06	Add TSE_READOK,TSE_WRITEOK,TSE_ERROR,TSE_STATE define.
+#|* 2019/04/18	Add STSEVENT define.
+#|
+*/

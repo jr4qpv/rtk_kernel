@@ -11,10 +11,14 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi since 2017/12/04.
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
- *	@(#)ssid.h (sys)
+ *	@(#)ssid.h (sys) 2018/11/14
  *
  *	Subsystem ID and subsystem priority
  *
@@ -43,6 +47,10 @@
  */
 #define MM_SVC		11		/* Memory management		*/
 #define MM_PRI			2
+#if 1	/* Modified by T.Yokobayashi */
+#define DT_SVC		15		/* Calendar management		*/
+#define DT_PRI			8
+#endif
 #define SM_SVC		16		/* System management		*/
 #define SM_PRI			2
 #define SEG_SVC		17		/* Segment management		*/
@@ -50,4 +58,32 @@
 #define	H8IO_SVC	25		/* (T-Engine) H8 input/output	*/
 #define	H8IO_PRI		8
 
+#if 1	/* Modified by T.Yokobayashi */
+/*
+ * OPT extension Subsystem (31 - 38)
+ */
+#define SYSCALLSIO_SVC	31		/* Newlib Syscalls I/O */
+#define SYSCALLSIO_PRI		2
+#define OPTBIOS_SVC     32      /* OPT-System BIOS call   */
+#define OPTBIOS_PRI         10
+#define SCPZBIOS_SVC    33      /* SCPZ-Board BIOS call   */
+#define SCPZBIOS_PRI        10
+#define LBUFCONS_SVC    34      /* Ling Buffer Console call */
+#define LBUFCONS_PRI        10
+#endif
+
+
 #endif /* __SYS_SSID_H__ */
+
+
+/*----------------------------------------------------------------------
+#|History of "ssid.h"
+#|-------------------
+#|* 2017/12/04	Add SYSCALLSIO_SVC,SYSCALLSIO_PRI define.
+#|* 2018/04/20	Add OPTBIOS_SVC,OPTBIOS_PRI define.
+#|* 2018/07/24	Add DT_SVC,DT_PRI define.
+#|* 2018/07/19	Add SCPZBIOS_SVC,SCPZBIOS_PRI define.
+#|* 2018/07/24	Add DT_SVC,DT_PRI define.
+#|* 2018/10/09	Add LBUFCONS_SVC,LBUFCONS_PRI define.
+#|
+*/

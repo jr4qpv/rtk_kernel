@@ -11,10 +11,14 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi since 2016/09/08.
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
- *	inittask_main.c (sysmain)
+ *	@(#)inittask_main.c (sysmain) 2019/05/02
  *	Initial Task
  */
 
@@ -40,11 +44,35 @@ EXPORT INT init_task_main( void )
 
 	/* Start message */
 #if USE_KERNEL_MESSAGE
+ #ifdef _TEF_EM1D_
 	tm_putstring((UB*)BOOT_MESSAGE);
+ #else	/* Modified by T.Yokobayashi */
+extern const char * const TitleAPP[5];	/* Boot Messages */
+	tm_printf("\n%s [%s]\n\n", TitleAPP[0], TitleAPP[2]);
+ #endif
 #endif
 
 	fin = 1;
 	adr = (MAIN_FP)ROMInfo->userinit;
+#if 1	/* Modified by T.Yokobayashi */	
+	if ( adr != NULL ) {
+		W *p = (W*)adr;
+		/* Check ApSignature & StartAddress */
+		if ((p[1] != 0x12345678) || (p[2] != (W)p)) {
+			tm_printf((UB*)"Userinit(%#x) code not found.\n", (int)p);
+  #if 0		/* for debug */
+			extern void    *lowmem_top, *lowmem_limit;
+			tm_printf("lowmem_top=%#x, lowmem_limit=%#x\n",
+					  (int)lowmem_top, (int)lowmem_limit);
+  #endif
+			tk_dly_tsk(200);
+			tm_monitor();
+		}
+	}
+#else	/* for debug */
+	adr = (MAIN_FP)NULL;
+#endif
+	
 	if ( adr != NULL ) {
 		/* Perform user defined initialization sequence */
 		fin = (*adr)(0, NULL);
@@ -60,3 +88,12 @@ EXPORT INT init_task_main( void )
 
 	return fin;
 }
+
+
+/*----------------------------------------------------------------------
+#|History of "inittask_main.c"
+#|----------------------------
+#|* 2016/09/08	The string of TitleAPP[0] is displayed at startup.
+#|* 2019/05/02	Added Check ApSignature & StartAddress.
+#|
+*/

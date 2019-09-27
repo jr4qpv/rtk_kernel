@@ -12,6 +12,10 @@
 #
 # ----------------------------------------------------------------------
 #
+#     Modified by T.Yokobayashi since 2019/05/01.
+#
+# ----------------------------------------------------------------------
+#
 
 #
 #	Makefile for gmake
@@ -36,10 +40,12 @@ HEADER += $(S) $(S)/sysdepend/$(TETYPE)_$(MACHINE)
 SRC +=	libinit.c knlinit.c _commarea.c liblock.c \
 	fastlock.c fastmlock.c \
 	chkspc.c chkspc2.c chkspc3.c \
-	memalloc.c memcheck.c tkminit.c malloc.c \
+	memalloc.c memcheck.c tkminit.c \
 	kmalloc.c kmcheck.c vmalloc.c vmcheck.c smalloc.c smcheck.c \
 	dbgmode.c fsrcvmode.c getdembf.c \
 	prreg.c _exit.c
+
+## malloc.c 
 
 OBJ	= $(addsuffix .o, $(basename $(notdir $(SRC))))
 
@@ -77,3 +83,10 @@ else
   $(DEPS): $(SRC) ; $(MAKEDEPS) $@ $?
 endif
 -include $(DEPS)
+
+
+# ----------------------------------------------------------------------
+#|History of "Makefile.common"
+#|----------------------------
+#|* 2019/05/01 Removed malloc.c to avoid conflict with libc.(By T.Yokobayashi)
+#|

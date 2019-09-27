@@ -10,6 +10,10 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi at 2019/04/08.
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
@@ -117,6 +121,9 @@ typedef struct t_ldev {
 #define TDN_DISPSPEC	(-3)	/* R-:Display device specification */
 #define TDN_PCMCIAINFO	(-4)	/* R-:PC card information */
 #define TDN_DISKINFO_D	(-5)	/* R-: Disk information (64 bits device) */
+#if 1	/* Modified by T.Yokobayashi */
+#define TDN_STSEVENT	(-6)	/* RW:Status event ID */
+#endif	
 
 /*
  * Device event type
@@ -310,3 +317,11 @@ IMPORT ER tk_ref_idv( T_IDEV *idev );
 }
 #endif
 #endif /* __TK_DEVMGR_H__ */
+
+
+/*----------------------------------------------------------------------
+#|History of "devmgr.h"
+#|---------------------
+#|* 2019/04/08	Add TDN_STSEVENT define.
+#|
+*/

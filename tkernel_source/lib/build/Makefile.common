@@ -14,7 +14,7 @@
 #
 
 #
-#	Makefile for gmake
+#	@(#)Makefile for gmake (lib) 2018/04/10
 #	library main (common description)
 #
 
@@ -50,3 +50,10 @@ clean_source:
 	$(MAKE) clean_source
 
 clean_all: clean clean_source
+
+
+# ----------------------------------------------------------------------
+#|History of "Makefile.common"
+#|----------------------------
+#|* 2017/09/03	 It is modifyed.(By T.Yokobayashi)
+#| 
