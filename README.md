@@ -1,4 +1,4 @@
-yT-Kernel
+yt-kernel
 ==========
 TRON Forum T-Kernel for Raspberry Pi and Renesas RZ/T1
 
@@ -12,16 +12,22 @@ Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープン
     - `2015/06/09  13:16  419,593 t2ex_source.tar.gz`
     - `2015/03/25  17:12  1,219,629 bsd_source.tar.gz`
 
-T2EXのコードも同梱しているが、一部参考にしている程度で現状ではT2EXの機能は殆ど利用していない。
-
-以前、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi)用に公開した「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」の構成を見直し、RTOS(T-Kernel)部分のみを分離し独立させ保守性を向上。
-更に、ルネサスの[RZ/T1](https://www.renesas.com/jp/ja/products/microcontrollers-microprocessors/rz/rzt/rzt1.html)マイコン用のコードも同梱。
+以前、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi)用に公開した「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」の構成を見直し、RTOS(T-Kernel)部分のみを分離し独立させ保守性を向上。更に、ルネサスの[RZ/T1](https://www.renesas.com/jp/ja/products/microcontrollers-microprocessors/rz/rzt/rzt1.html)マイコン用のコードも同梱。
 
 本プロジェクトを直接修正して利用する事もできるが、アプリプロジェクト内にGitサブモジュール機能を利用し、本プロジェクトをサブディレクトリとして登録して使う事を想定。
 
+サンプルアプリも別プロジェクトで公開していく。
+
+### T2EXについて
+[T-Kernel 2.0 Extension (T2EX)](https://www.tron.org/ja/tron-project/what-is-t-kernel/t2ex/) は、T-Kernel にネットワーク機能などを追加する拡張モジュール。
+
+本プロジェクトには、参考にT2EXのコードも同梱しているが、現状ではT2EXの機能は殆ど利用してない。
+
+* t2ex用のビルドフォルダも残っているが、現状メンテナンスしていない。
+
 Git管理リポジトリ
 ------------------
-<https://github.com/jr4qpv/yt-kernel>
+<https://github.com/jr4qpv/yt-kernel.git>
 
 
 サポートサイト
@@ -71,6 +77,13 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 * [Ubuntu 18.04 LTS Server](https://www.ubuntulinux.jp/home)
 * [gcc-arm-none-eabi package in Ubuntu](https://launchpad.net/ubuntu/+source/gcc-arm-none-eabi)  6.3.1 20170620
 
+### コンパイルに環境変数
+コンパイル実行するには、下記環境変数が設定されている事が必要。
+
+|環境変数  |説明                     |例            |
+|:--------|:-----------------------|:-------------|
+|BD       |T-Kernelソースのベースパス |`/C/work/yt-kernel/tkernel_source`  |
+|GNU_BD   |ARMコンパイラのベースパス   |`/C/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q2` |
 
 仕様書
 ------
@@ -82,11 +95,11 @@ T-Kernel関連の仕様書は[Tronフォーラム](http://www.tron.org/ja/)を�
 
 ライセンス
 ----------
-T-License2.1に従う。添付ファイル`TEF000-218-150401.pdf`を参照。
+T-License2.1に従う。同梱ファイル `TEF000-218-150401.pdf` を参照。
 
 ディストリビューションucode
 ---------------------------
-T-Kernel再配布規約に従い、本ソフトウェアのディストリビューション番号は「`00070059`」。添付ファイル`yt-kernel_distmark.png`を参照。
+T-Kernel再配布規約に従い、本ソフトウェアのディストリビューション番号は「`00070059`」。同梱ファイル `yt-kernel_distmark.png` を参照。
 
 免責
 ----
@@ -94,4 +107,4 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 
 来歴
 ----
-* 2019/09/27 r0.60公開
+* 2019/09/28 r0.60公開
