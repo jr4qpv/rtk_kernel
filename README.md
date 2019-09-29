@@ -60,6 +60,24 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 * 「Renesas Starter Kit+ for RZ/T1」は下記URL参照  
 <https://www.renesas.com/jp/ja/products/software-tools/boards-and-kits/starter-kits/renesas-starter-kitplus-for-rz-t1.html>
 
+
+プロジェクトのファイル＆フォルダ説明
+--------------------------
+
+| フォルダ名                | 説明                       | 備考            |
+|:-------------------------|:--------------------------|:---------------|
+| `README.md`              | 説明ファイル                | Markdownで記述   |
+| `TEF000-218-150401.pdf`  | ライセンス規約              | T-License2.1    |
+| `yt-kernel_distmark.png` | T-Kernelディストリビューションucode  |          |
+| `tkernel_source/`        | T-Kenelソース本体フォルダ    | ポーティングしたもの  |
+| `doc/`                   | 関連ドキュメントフォルダ      |               |
+| `_misc/`                 | その他                     |               |
+| `.cproject`              | e2 Studio用               | RZ/T1         |
+| `.project`               | e2 Studio用               | RZ/T1         |
+| `.setting/`              | e2 Studio用               | RZ/T1         |
+| `*.launch`               | e2 Studioデバック用        | RZ/T1          |
+| `*.jlink`                | e2 Studio J-Linkデバック用  | RZ/T1         |
+
 ビルド環境
 ----------
 作者が確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。
