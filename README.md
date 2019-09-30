@@ -12,9 +12,9 @@ Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープン
     - `2015/06/09  13:16  419,593 t2ex_source.tar.gz`
     - `2015/03/25  17:12  1,219,629 bsd_source.tar.gz`
 
-以前、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi)用に公開した「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」の構成を見直し、RTOS(T-Kernel)部分のみを分離し独立させ保守性を向上。更に、ルネサスの[RZ/T1](https://www.renesas.com/jp/ja/products/microcontrollers-microprocessors/rz/rzt/rzt1.html)マイコン用のコードも同梱。
+以前、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi)用に公開してた「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」の構成を見直し、RTOS(T-Kernel)部分のみを分離し独立させ保守性を向上。更に、ルネサスの[RZ/T1](https://www.renesas.com/jp/ja/products/microcontrollers-microprocessors/rz/rzt/rzt1.html)マイコン用のコードも同梱。
 
-本プロジェクトを直接修正して利用する事もできるが、アプリプロジェクト内にGitサブモジュール機能を利用し、本プロジェクトをサブディレクトリとして登録して使う事を想定。
+本プロジェクトを直接修正して利用する事もできるが、アプリプロジェクト内にGitサブモジュール機能でサブディレクトリとして登録して使う事を想定。
 
 サンプルアプリも別プロジェクトで公開していく。
 
@@ -23,10 +23,10 @@ Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープン
 
 本プロジェクトには、参考にT2EXのコードも同梱しているが、現状ではT2EXの機能は殆ど利用してない。
 
-* t2ex用のビルドフォルダも残っているが、現状メンテナンスしていない。
+* t2ex用のビルドフォルダも残っているが、メンテナンスしていない。
 
-Git管理リポジトリ
-------------------
+Gitリポジトリ
+---------------
 <https://github.com/jr4qpv/yt-kernel.git>
 
 
@@ -95,13 +95,13 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 * [Ubuntu 18.04 LTS Server](https://www.ubuntulinux.jp/home)
 * [gcc-arm-none-eabi package in Ubuntu](https://launchpad.net/ubuntu/+source/gcc-arm-none-eabi)  6.3.1 20170620
 
-### コンパイルに環境変数
+### コンパイルに必要な環境変数
 コンパイル実行するには、下記環境変数が設定されている事が必要。
 
 |環境変数  |説明                     |例            |
 |:--------|:-----------------------|:-------------|
 |BD       |T-Kernelソースのベースパス |`/C/work/yt-kernel/tkernel_source`  |
-|GNU_BD   |ARMコンパイラのベースパス   |`/C/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q2` |
+|GNU_BD   |ARMコンパイラのベースパス   |`/C/Program Files (x86)/GNU Tools ARM Embedded/6 2017-q2-update` |
 
 仕様書
 ------
@@ -122,6 +122,12 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 免責
 ----
 本プログラムの使用にあたっては、使用者自身の責任で行ってください。作者は何の保証もしないし、本プログラムを利用した上で生じたいかなる障害や損害についても、作者は責任を負いません。
+
+
+補足
+----
+
+* 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結してこれ以上の更新は行いません。今後は、この「[yt-kernel](https://github.com/jr4qpv/yt-kernel)」に移行し更新していきます。
 
 来歴
 ----

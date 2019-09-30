@@ -1,10 +1,10 @@
-T-Kernel for RZ/T1 移植メモ
-==============================
+T-Kernel for Raspberry Pi 移植メモ
+======================================
 本ファイルは、Markdown記法で書いています。
 
 概要
 ----
-Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープンソース T-Kernel2.0 & Extensyon(T2EX)から、ルネサス[RZ/T1](https://www.renesas.com/ja-jp/products/microcontrollers-microprocessors/rz/rzt/rzt1.html) にポーティングしたリアルタイムＯＳ。
+Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープンソース T-Kernel2.0 & Extensyon(T2EX)から、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi) にポーティングしたリアルタイムＯＳ。
 
 1. [T-Kernel 2.02.00 Software Package](http://www.tron.org/download/index.php?route=product/product&product_id=133)
     - `2015/06/08  18:35  396,299 tkernel_source.tar.gz`
@@ -12,32 +12,49 @@ Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープン
     - `2015/06/09  13:16  419,593 t2ex_source.tar.gz`
     - `2015/03/25  17:12  1,219,629 bsd_source.tar.gz`
 
-#### 【対応機種】
-TYPE_RZTは、コンパイル時にRZ/T1の機種を区別しているmake変数。
+### 【Raspberry Pi 対応機種】
+TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake変数。
 
-|機種                     |TYPE_RZT|備考                    |
-|:------------------------|:------:|:-----------------------|
-|ルネサス RZ/T1評価ボード | 0      |                        |
-|Original SCPZ-1基板    | 1      |                        |
+|モデル        | TYPE_RPI |備考                    |
+|:-------------|:--------:|:-----------------------|
+|Pi Zero       | 1        |                        |
+|Pi 1 Model B+ | 1        |動作未確認              |
+|Pi 2 Model B  | 2        |シングルコア動作        |
+|Pi 3 Model B  | 3        |32bit,シングルコア動作  |
+
+
+Gitリポジトリ
+---------------
+<https://github.com/jr4qpv/yt-kernel.git>
+
+
+サポートサイト
+----------------
+下記URLで、ビルド手順や実行方法などの技術情報を逐次提供しているので、詳細はそちらをご覧ください。
+
+<https://www.yokoweb.net/dokuwiki/develop/yt-kernel/start>
+
 
 ビルド環境
------------
-動作確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。インストール手順は参考リンク[1.][2.][3.]を参照。
-#### 【Windows】
-* [msys2](https://msys2.github.io/)
-* [GNU ARM Embedded Toolchain](https://launchpad.net/gcc-arm-embedded)  5-2016-q2-update
+----------
+作者が確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。インストール手順は、参考リンク[1.][2.][3.]を参照。
 
-#### 【macOS】
-* macOS Sierra v10.12.4
-* [GNU ARM Embedded Toolchain](https://launchpad.net/gcc-arm-embedded)  5-2016-q2-update
+#### 【Windows】
+* Windows10 Pro x64 ver1903
+* [msys2](https://msys2.github.io/)
+* [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  6 2017-q2-update
+
+#### 【Mac】
+* macOS v10.14.6 Mojave
+* [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  7-2017-q4-major
 
 #### 【Linux】
-* [Ubuntu 16.04 LTS Server](https://www.ubuntulinux.jp/home)
-* [GNU ARM Embedded Toolchain](https://launchpad.net/gcc-arm-embedded)  5-2016-q2-update
+* [Ubuntu 18.04 LTS Server](https://www.ubuntulinux.jp/home)
+* [gcc-arm-none-eabi package in Ubuntu](https://launchpad.net/ubuntu/+source/gcc-arm-none-eabi)  6.3.1 20170620
 
 コンパイル手順
 --------------
-以下、Windowsのmsys2環境での例に説明する。MacやLinuxでも同様なのでそれぞれの環境に読み換えてください。T-Monitor,config,T-Kernel３つのファイルを作成する。
+以下、Windowsのmsys2環境での例に説明する。MacやLinuxでも同様なのでそれぞれの環境に読み換えてください。T-Monitor,config,T-Kernelの3つのファイルを作成する。
 
 コンパイル実行するには、下記環境変数が設定されている事が必要。
 
@@ -46,21 +63,23 @@ TYPE_RZTは、コンパイル時にRZ/T1の機種を区別しているmake変数
 |BD       |T-Kernelソースのベースパス |              |
 |GNU_BD   |ARMコンパイラのベースパス  |              |
 
+
 #### 環境変数の設定
 `$HOME/.bashrc`に下記設定を追記しておくと便利。本プログラムは `C:¥work¥` にgitで取得したものとする。
 
 ```
-export BD=/C/work/rpi_t-kernel/tkernel_source
-export GNU_BD='/C/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q2'
+export BD=/C/work/yt-kernel/tkernel_source
+export GNU_BD='/C/Program Files (x86)/GNU Tools ARM Embedded/6 2017-q2-update'
 ```
 
 #### ■T-Monitorのコンパイル
 下記フォルダにて `make` を実行する事でコンパイルする。
 
-|ビルドフォルダ                            |備考        |
-|:-----------------------------------------|:-----------|
-|$BD/monitor/tmmain/build/app_rzt1         |            |
-|$BD/monitor/tmmain/build/app_rzt1.ram     |RAM起動     |
+|ビルドフォルダ                            |機種                |備考        |
+|:-----------------------------------------|:-------------------|:-----------|
+|$BD/monitor/tmmain/build/rpi_bcm283x      |Raspberry Pi Zero/1 |            |
+|$BD/monitor/tmmain/build/rpi_bcm283x.rpi2 |Raspberry Pi 2      |            |
+|$BD/monitor/tmmain/build/rpi_bcm283x.rpi3 |Raspberry Pi 3      |            |
 
 * `.debug`ついたフォルダでコンパイルするとデバック情報を付加する
 * `make clean`で生成されたファイルを削除
@@ -70,53 +89,55 @@ export GNU_BD='/C/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q2'
 |ファイル名    |説明                       |備考          |
 |:-------------|:--------------------------|:-------------|
 |tmonitor      |elfファイル                |              |
+|tmonitor.bin  |バイナリファイル           |←これを利用  |
 |tmonitor.mot  |Sフォーマットファイル      |              |
 
 #### ■config情報のコンパイル
 下記フォルダにて `make` を実行する事でconfigファイルを作成する。
 
-|ビルドフォルダ                            |備考       |
-|:-----------------------------------------|:----------|
-|$BD/config/build/app_rzt1                 |           |
-|$BD/config/build_t2ex/app_rzt1            |           |
+|ビルドフォルダ                       |機種                |備考       |
+|:------------------------------------|:-------------------|:----------|
+|$BD/config/build/rpi_bcm283x         |Raspberry Pi Zero/1 |           |
+|$BD/config/build/rpi_bcm283x.rpi2    |Raspberry Pi 2      |           |
+|$BD/config/build/rpi_bcm283x.rpi3    |Raspberry Pi 3      |           |
 
 * `make clean`で生成されたファイルを削除
 
 生成されるconfigオブジェクトファイル
 
-|ファイル名           |説明                       |備考          |
-|:--------------------|:--------------------------|:-------------|
-|rominfo-rom          |elfファイル                |              |
-|rominfo_t2ex-rom.bin |バイナリファイル           |←これを利用  |
-|rominfo_t2ex-rom.mot |Sフォーマットファイル      |              |
+|ファイル名      |説明                       |備考          |
+|:---------------|:--------------------------|:-------------|
+|rominfo-rom     |elfファイル                |              |
+|rominfo-rom.bin |バイナリファイル           |←これを利用  |
+|rominfo-rom.mot |Sフォーマットファイル      |              |
 
 #### ■T-Kernelのコンパイル
 下記フォルダにて `make` を実行する事でコンパイルする。
 
-|ビルドフォルダ                                 |機種                |備考     |
-|:----------------------------------------------|:-------------------|:--------|
-|$BD/kernel/sysmain/build_t2ex/rpi_bcm283x      |Raspberry Pi Zero/1 |         |
-|$BD/kernel/sysmain/build_t2ex/rpi_bcm283x.rpi2 |Raspberry Pi 2      |         |
-|$BD/kernel/sysmain/build_t2ex/rpi_bcm283x.rpi3 |Raspberry Pi 3      |         |
+|ビルドフォルダ                            |機種                |備考     |
+|:-----------------------------------------|:-------------------|:--------|
+|$BD/kernel/sysmain/build/rpi_bcm283x      |Raspberry Pi Zero/1 |         |
+|$BD/kernel/sysmain/build/rpi_bcm283x.rpi2 |Raspberry Pi 2      |         |
+|$BD/kernel/sysmain/build/rpi_bcm283x.rpi3 |Raspberry Pi 3      |         |
 
 * `.debug`ついたフォルダでコンパイルするとデバック情報を付加する
 * `make clean`で生成されたファイルを削除
 
 生成されるT-Kernelオブジェクトファイル
 
-|ファイル名            |説明                       |備考          |
-|:---------------------|:--------------------------|:-------------|
-|kernel_t2ex-rom.rom   |elfファイル                |              |
-|kernel_t2ex-rom.bin   |バイナリファイル           |←これを利用  |
-|kernel_t2ex-rom.mot   |Sフォーマットファイル      |              |
+|ファイル名       |説明                       |備考          |
+|:----------------|:--------------------------|:-------------|
+|kernel-rom.rom   |elfファイル                |              |
+|kernel-rom.bin   |バイナリファイル           |←これを利用  |
+|kernel-rom.mot   |Sフォーマットファイル      |              |
 
 #### コンパイルの実行例
 ```
 $ cd $BD/monitor/tmmain/build/rpi_bcm283x.rpi2
 $ make
-$ cd $BD/config/build_t2ex/rpi_bcm283x.rpi2
+$ cd $BD/config/build/rpi_bcm283x.rpi2
 $ make
-$ $BD/kernel/sysmain/build_t2ex/rpi_bcm283x.rpi2
+$ $BD/kernel/sysmain/build/rpi_bcm283x.rpi2
 $ make
 ```
 
@@ -152,8 +173,8 @@ GitHub（<https://github.com/jr4qpv/rpi_u-boot_jtag_bins>）から、各Raspberr
 T-Kernel関連のファイルを、前記コンパイル手順で作成した下記3つのファイルを、SDカードに書き込む。
 
 1. `tmonitor.bin`
-2. `rominfo_t2ex-rom.bin`
-3. `kernel_t2ex-rom.bin`
+2. `rominfo-rom.bin`
+3. `kernel-rom.bin`
 
 T-Kernelの起動
 --------------
@@ -163,20 +184,21 @@ T-Kernelの起動
 
 ```
 u-boot> fatload mmc 0 8000 tmonitor.bin
-u-boot> fatload mmc 0 4000 rominfo_t2ex-rom.bin
-u-boot> fatload mmc 0 30000 kernel_t2ex-rom.bin
+u-boot> fatload mmc 0 4000 rominfo-rom.bin
+u-boot> fatload mmc 0 30000 kernel-rom.bin
 u-boot> go 8000
 ```
 
-起動メッセージと `T2EX>>` のプロンプトが表示されたら、無事T-Kernelが起動し、簡易コマンドインタプリタからコマンド入力できる。（下記、コマンド実行例）
+起動メッセージが下記のように表示されたら、無事T-Kernelが起動。この例では、アプリの実行コードが認識できないのでT-Monitorの入力待ちに戻る。
 
 ```
-T2EX>> ref tsk
-TSK STATE (MAX:150)
-TID PRI:BPR SLT WUP SUS STS(*:NODISWAI)  ST+UT(x10) RID EXINF
-  1 138:138   0   0   0 RUN                 0+0       1
-  2 140:140   0   0   0 WAI-DLY             0+0       1
-T2EX>>
+U-Boot> go 8000
+## Starting application at 0x00008000 ...
+
+T-Kernel Version 2.02.00 for RPi2 r0.11 [Mon Sep 30 15:06:01 JST 2019]
+
+Userinit(0x80000) code not found.
+TM>
 ```
 
 u-bootの調整
@@ -186,7 +208,7 @@ u-bootの調整
 u-bootのコマンド入力待ちから、下記コマンドを入力
 
 ```
-u-boot> setenv tk_bootcmd 'fatload mmc 0 8000 tmonitor.bin; fatload mmc 0 4000 rominfo_t2ex-rom.bin; fatload mmc 0 30000 kernel_t2ex-rom.bin; go 8000'
+u-boot> setenv tk_bootcmd 'fatload mmc 0 8000 tmonitor.bin; fatload mmc 0 4000 rominfo-rom.bin; fatload mmc 0 30000 kernel-rom.bin; go 8000'
 u-boot> setenv bootcmd 'run tk_bootcmd'
 u-boot> setenv bootdelay 2
 u-boot> saveenv
@@ -202,35 +224,8 @@ u-boot> saveenv
 電源投入でu-bootのコマンド待ちとなり、`boot`コマンド入力で、bootcmd変数登録のコマンドが実行されるのでT-Kernelが起動。
 
 メモリマップ
--------------
+------------
 実装仕様書`doc/T-Kernel2.0/doc/impl-tef_em1d.txt`からの差分
-
-(1)物理メモリマップ
-
-|addr       | 説明                       |容量  |
-|:----------|:---------------------------|:----:|
-|0000 0000h |ATCM                        |512KB |
-|0008 0000h |予約領域                    |      |
-|0080 0000h |BTCM                        |32KB  |
-|0080 8000h |予約領域                    |      |
-|0400 0000h |Instruction RAM             |512KB |
-|0408 0000h |予約領域                    |      |
-|1000 0000h |SPIシリアルフラッシュ       |8MB   |
-|1080 0000h |予約領域                    |      |
-|2000 0000h |Data RAM                    |512KB |
-|2008 0000h |予約領域                    |      |
-|2200 0000h |Data RAM ミラー             |512KB |
-|2208 0000h |予約領域                    |      |
-|2400 0000h |Instruction RAM ミラー      |512KB |
-|2408 0000h |予約領域                    |      |
-|3000 0000h |SPIシリアルフラッシュ ミラー|8MB   |
-|3080 0000h |予約領域                    |      |
-|4800 0000h |CS2 SDRAM ミラー            |8MB   |
-|4880 0000h |予約領域                    |      |
-|6800 0000h |CS2 SDRAM                   |8MB   |
-|6880 0000h |予約領域                    |      |
-|A000 0000h |周辺IOレジスタ              |1MB   |
-|A010 0000h |予約領域                    |      |
 
 ```
 (2) ROM 詳細（Raspberry PiではD-RAMでu-bootでロード）
@@ -355,8 +350,9 @@ JTAGデバッグ可能なように、T-Monitorの初期化時に、Raspberry Pi�
 
 ユーザアプリケーション
 ----------------------
-T-Kernelが起動すると、usermain()タスクから、`tkernel_source/kernel/sysmain/src/appl_main.c`のappl_main()関数が呼び出される。ここに、ユーザ定義のアプリケーションプログラムを記述していく。
-作者のサンプルでは、`sample_task.c`のsample_tsk()をタスクとして登録し、LEDを点滅させている。
+T-Kernelが起動すると、opt_main()タスクが起動され（`tkernel_source/kernel/sysmain/src/opt_main.c`）、rominfoに記述したアプリ開始番地から起動を試みる。ヘッダ情報が不正の場合は、T-Monitorに戻る。
+
+又、Kernelとリンクしたアプリの場合は、opt_main()からユーザ定義のアプリケーションプログラムを記述していく。
 
 仕様書
 ------
@@ -368,11 +364,11 @@ T-Kernel関連の仕様書は[Tronフォーラム](http://www.tron.org/ja/)を�
 
 ライセンス
 ----------
-T-License2.1に従う。添付ドキュメント`TEF000-218-150401.pdf`を参照ください。
+T-License2.1に従う。同梱ドキュメント `TEF000-218-150401.pdf` を参照ください。
 
 ディストリビューションucode
 ---------------------------
-T-Kernel再配布規約に従い、本ソフトウェアのディストリビューション番号は「`00070055`」
+T-Kernel再配布規約に従い、本ソフトウェアのディストリビューション番号は「`00070059`」。同梱ファイル `yt-kernel_distmark.png` を参照。
 
 免責
 ----
@@ -382,22 +378,18 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 ---------
 1. [【msys2】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2016/08/31/msys2-arm-gcc/)
 2. [【macOS】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2016/09/03/macos-arm-gcc/)
-3. [【Ubuntu 16.04 LTS Server】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2016/08/11/ubuntu-arm-gcc/)
+3. [【Ubuntu 18.04 LTS Server】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2018/05/16/ubuntu-18_04-gcc-arm-install/)
 4. [【Raspberry Pi】u-bootを動かす](https://www.yokoweb.net/2016/08/13/raspberrypi-uboot/)
-5. [【Ubuntu 16.04 LTS Server】u-bootをコンパイルする](https://www.yokoweb.net/2016/08/11/ubuntu-uboot-gcc/)
+5. [【Ubuntu 18.04/16.04 LTS Server】u-bootをコンパイルする](https://www.yokoweb.net/2016/08/11/ubuntu-uboot-gcc/)
 6. [【Raspberry Pi】参考になるベアメタルなドキュメント](https://www.yokoweb.net/2016/09/04/raspberrypi-document/)
 7. [【Raspberry Pi】u-bootでJTAGピンを有効にする](https://www.yokoweb.net/2016/08/23/raspberrypi-jtag/)
 
 作者関連サイト
 -------------
 * [GitHub (jr4qpv)](https://github.com/jr4qpv/)
+* [新石器Wiki](https://www.yokoweb.net/dokuwiki/)
 * [The modern stone age.](https://www.yokoweb.net/)
-* [JR4QPV Yoko's Library](http://jr4qpv.my.coocan.jp/)
-
-補足
-----
-本ソフトウェアに関しては、作者のブログ「[The modern stone age.](https://www.yokoweb.net/)」でも情報公開していきますので参考にください。
 
 来歴
 ----
-* 2017/05/25 新規作成
+* 2019/09/28 r0.60公開
