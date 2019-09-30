@@ -19,7 +19,7 @@
 #
 
 #
-#	@(#)Makefile for gmake (BCM283x) 2018/11/15
+#	@(#)Makefile for gmake (BCM283x) 2019/09/29
 #	sysmain (system-dependent description)
 #
 
@@ -32,7 +32,7 @@ TYPE_RPI = 1
 
 # ----------------------------------------------------------------------------
 # T-Kernel for Raspberry Pi version
-APP_VER = 0.11
+APP_VER = 0.60
 
 # ----------------------------------------------------------------------------
 # default rules
@@ -114,4 +114,5 @@ include ../Makefile.common
 #|* 2016/08/08	TYPE_RPI指定を追加(1,2,3を指定)、但しﾌｫﾙﾀﾞ名による指定が優先
 #|* 2016/09/12	APP_VER=0.10の追加
 #|* 2017/04/11	APP_VER=0.11に変更
+#|* 2019/09/29	APP_VER=0.60に変更
 #|
