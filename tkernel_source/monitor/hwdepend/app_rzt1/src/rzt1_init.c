@@ -7,7 +7,7 @@
  */
 
 /*
- *	@(#)rzt1_init.c (RZT1) 2018/04/16
+ *	@(#)rzt1_init.c (RZT1) 2019/10/08
  *
  *  RZ/T1 initialize routine
  *  ※"common/sflash_boot/bus_init_serial_boot.c"でも設定してるので参照
@@ -218,6 +218,12 @@ void	rzt1_initialize(void)
 
 	PORTA.PODR.BIT.B0 = PORT_OUTPUT_LOW;    // Set output level to Low
 	PORTA.PDR.BIT.B0 = PORT_DIRECTION_OUTPUT;  // Set port direction to output
+
+	/* Set PU7 to Input port pin (RSK Using DIPSW4-6) */
+	PORTU.PDR.BIT.B7 = PORT_DIRECTION_HIZ;  // Initialize port settings
+	PORTU.PMR.BIT.B7 = PORT_MODE_GENERAL;
+
+	PORTU.PDR.BIT.B7 = PORT_DIRECTION_INPUT;  // Set port direction to intput
 #endif
 	
 	return;
@@ -228,6 +234,7 @@ void	rzt1_initialize(void)
 #|History of "rzt1_init.c"
 #|------------------------
 #|* 2018/03/26	New created.(by T.Yokobayashi)
-#|* 2018/04/16	「BOARD_RZT1_SCPZ」に対応。
+#|* 2018/04/16	「BOARD_RZT1_SCPZ」の定義追加。
+#|* 2019/10/08	RSK時、PU7は入力ピンに設定。
 #|
 */

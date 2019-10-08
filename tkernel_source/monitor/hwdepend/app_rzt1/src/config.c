@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)config.c (monitor) 2018/08/24
+ *	@(#)config.c (monitor) 2019/10/08
  *
  *       system-related processing / system configuration information
  *
@@ -134,8 +134,10 @@ EXPORT	UW	DipSwStatus(void)
 #endif
 
 #ifdef BOARD_RZT1_RSK
-//	d = SW_MON;			/////////// kari T-Mmonitor待ち //////////
-	d = 0;			/////////// kari T-Kernel自動起動する //////////
+	d = 0;
+	
+	if (PORTU.PIDR.BIT.B7 != 0)			/* PU7(In) SW4-6 ? */
+		d |= SW_MON;					/* SW OFF='H'で、T-Mmonitor強制起動 */
 #endif
 
 	
@@ -559,5 +561,6 @@ EXPORT	const UW	GPIOConfig[] __attribute__((section(".startup"))) = {
 #|---------------------
 #|* 2016/03/10	It's copied from "../tef_em1d/" and it's modified.
 #|* 2017/08/08	resetStart()で、ソフトウェアリセット実行する対応
+#|* 2019/10/08	RSK時、PU7(SW4-6)がOFF時でT-Monitor強制起動とする。
 #|
 */
