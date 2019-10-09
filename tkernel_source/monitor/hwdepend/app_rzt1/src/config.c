@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)config.c (monitor) 2019/10/08
+ *	@(#)config.c (monitor) 2019/10/09
  *
  *       system-related processing / system configuration information
  *
@@ -124,6 +124,13 @@ EXPORT	UW	DipSwStatus(void)
 {
 	UW	d;
 
+#ifdef BOARD_RZT1_RSK
+	d = 0;
+	
+	if (PORT3.PIDR.BIT.B5 == 0)			/* P35(In) NMI-SW1 ? */
+		d |= SW_MON;					/* SW ON='L'で、T-Mmonitor強制起動 */
+#endif
+
 #ifdef BOARD_RZT1_SCPZ
 	_UW *dipsw = (_UW*)0x74000000;		/* CS5 */
 	d = ~(*dipsw);						/* Read dipsw to D16～D31 */
@@ -131,13 +138,6 @@ EXPORT	UW	DipSwStatus(void)
 
 	if ((d & 0xF) == 0)					/* 下位4bit=0 ? */
 		d |= SW_MON;					/* T-Mmonitor強制起動 */
-#endif
-
-#ifdef BOARD_RZT1_RSK
-	d = 0;
-	
-	if (PORTU.PIDR.BIT.B7 != 0)			/* PU7(In) SW4-6 ? */
-		d |= SW_MON;					/* SW OFF='H'で、T-Mmonitor強制起動 */
 #endif
 
 	
@@ -233,7 +233,6 @@ EXPORT	void	cpuLED(UW v)
 	d = ((v >>  0) & 0x0f);		// set value (0:off 1:on) :正論理
 //	d = ~((v >>  0) | 0xf0);	// set value (0:on 1:off) :負論理
 
-#if 1
 	/* PF7---LED0 */
 	r = PORTF.PODR.BYTE;
 	tmp = r;					// 退避
@@ -252,6 +251,7 @@ EXPORT	void	cpuLED(UW v)
 	r = tmp;					// 復帰
 	PORT5.PODR.BYTE = r ^ c;
 
+#ifdef BOARD_RZT1_RSK
 	/* P77---LED2 */
 	r = PORT7.PODR.BYTE;
 	tmp = r;					// 退避
@@ -269,11 +269,11 @@ EXPORT	void	cpuLED(UW v)
 	c = (c & 0x08) >> 3;		// bit3だけ有効
 	r = tmp;					// 復帰
 	PORTA.PODR.BYTE = r ^ c;
-#else
-	r = IICGPIORead(0xb9);
-	c = (r ^ d) & m;			// modify flag (0:unmodified 1:modify)
-	IICGPIOWrite(0xb8, r ^ c);
 #endif
+	
+///	r = IICGPIORead(0xb9);
+///	c = (r ^ d) & m;			// modify flag (0:unmodified 1:modify)
+///	IICGPIOWrite(0xb8, r ^ c);
 }
 
 /*
@@ -561,6 +561,6 @@ EXPORT	const UW	GPIOConfig[] __attribute__((section(".startup"))) = {
 #|---------------------
 #|* 2016/03/10	It's copied from "../tef_em1d/" and it's modified.
 #|* 2017/08/08	resetStart()で、ソフトウェアリセット実行する対応
-#|* 2019/10/08	RSK時、PU7(SW4-6)がOFF時でT-Monitor強制起動とする。
+#|* 2019/10/08	RSK時、NMI(SW1)がONでT-Monitor強制起動とする。
 #|
 */
