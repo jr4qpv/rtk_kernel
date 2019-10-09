@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)usermain.c (sysmain) 2019/05/02
+ *	@(#)usermain.c (sysmain) 2019/10/09
  *	User Main for T-Kernel
  */
 
@@ -26,6 +26,9 @@
 #include <tk/tkernel.h>
 #include <tm/tmonitor.h>
 #include <libstr.h>
+#include <sys/rominfo.h>
+
+typedef INT	(*MAIN_FP)(INT, UB **);
 
 /* Device drivers */
 IMPORT ER ConsoleIO( INT ac, UB *av[] );
@@ -163,10 +166,25 @@ EXPORT	INT	usermain( void )
 #ifdef DEBUG_SAMPLE
 	/* Debug sample */
 	debug_sample();
-#else
-	/* User mainstart */
-	tm_putstring((UB*)"usermain.\n");
 #endif
+
+#if 1	/* Modified by T.Yokobayashi */
+	/* userinit program execute check */
+	MAIN_FP	adr;
+	adr = (MAIN_FP)ROMInfo->userinit;
+	if ( adr != NULL ) {
+		W *p = (W*)adr;
+		/* Check ApSignature & StartAddress & ApType */
+		if ((p[1] == 0x12345678) && (p[2] == (W)p) && (p[3] == 1)) {
+			/* Perform user defined program in usermain() */
+			ercd = (*adr)(0, NULL);
+		}
+	}
+	else {
+		/* User mainstart */
+		tm_putstring((UB*)"usermain.\n");
+	}
+#endif	
 
 	/* System shutdown */
 	tm_putstring((UB*)"Push any key to shutdown the T-Kernel.\n");
@@ -200,5 +218,6 @@ EXPORT	INT	usermain( void )
 #|History of "usermain.c"
 #|-----------------------
 #|* 2015/12/22	It's modified.
+#|* 2019/10/09	Added userinit program execute check.
 #|
 */

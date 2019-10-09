@@ -19,7 +19,7 @@
 #
 
 #
-#	@(#)Makefile for gmake (RZT1) 2018/11/15
+#	@(#)Makefile for gmake (RZT1) 2019/10/08
 #	sysmain (system-dependent description)
 #
 
@@ -51,7 +51,7 @@ LDUSRLIBS =
 
 # ----------------------------------------------------------------------------
 # device driver definitions
-#DRV_CONSOLE = yes
+DRV_CONSOLE = yes
 #DRV_CLOCK   = yes
 ###DRV_SYSDISK = yes
 ###DRV_SCREEN  = yes
@@ -101,4 +101,6 @@ include ../Makefile.common
 #|* 2016/03/14	../tef_em1d/から、 [app_rzt1]用にコピーし、
 #|  MACHINE, TETYPE を修正。
 #|* 2017/09/05	APP_VER=0.11の追加
+#|* 2019/09/29	APP_VER=0.60に変更
+#|* 2019/10/08	DRV_CONSOLEを有効にした
 #|

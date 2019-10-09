@@ -19,7 +19,7 @@
 #
 
 #
-#	@(#)Makefile for gmake (BCM283x) 2019/09/29
+#	@(#)Makefile for gmake (BCM283x) 2019/10/08
 #	sysmain (system-dependent description)
 #
 
@@ -62,7 +62,7 @@ LDUSRLIBS =
 
 # ----------------------------------------------------------------------------
 # device driver definitions
-#DRV_CONSOLE = yes
+DRV_CONSOLE = yes
 #DRV_CLOCK   = yes
 ###DRV_SYSDISK = yes
 ###DRV_SCREEN  = yes
@@ -115,4 +115,5 @@ include ../Makefile.common
 #|* 2016/09/12	APP_VER=0.10の追加
 #|* 2017/04/11	APP_VER=0.11に変更
 #|* 2019/09/29	APP_VER=0.60に変更
+#|* 2019/10/08	DRV_CONSOLEを有効にした
 #|
