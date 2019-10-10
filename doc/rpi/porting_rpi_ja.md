@@ -189,16 +189,18 @@ u-boot> fatload mmc 0 30000 kernel-rom.bin
 u-boot> go 8000
 ```
 
-起動メッセージが下記のように表示されたら、無事T-Kernelが起動。この例では、アプリの実行コードが認識できないのでT-Monitorの入力待ちに戻る。
+起動メッセージが下記のように表示されたら、無事T-Kernelが起動。この例では、アプリの実行コードが認識できないので、サンプルアプリ(簡易シェル)の入力待ちとなっている。
 
 ```
 U-Boot> go 8000
 ## Starting application at 0x00008000 ...
 
-T-Kernel Version 2.02.00 for RPi2 r0.11 [Mon Sep 30 15:06:01 JST 2019]
+T-Kernel Version 2.02.00 for RPi2 r0.60 [Thu Oct 10 16:58:26 JST 2019]
 
-Userinit(0x80000) code not found.
-TM>
+ConsoleIO - OK
+userinit(0x80000) code not found.
+usermain start.
+T2EX >>
 ```
 
 u-bootの調整

@@ -13,13 +13,13 @@
 #
 # ----------------------------------------------------------------------
 #
-#     Modified by T.Yokobayashi at 2016/03/14.
+#     Modified by T.Yokobayashi since 2016/03/14.
 #
 # ----------------------------------------------------------------------
 #
 
 #
-#	@(#)Makefile for gmake (RZT1) 2019/10/08
+#	@(#)Makefile for gmake (RZT1) 2019/10/10
 #	sysmain (system-dependent description)
 #
 
@@ -41,10 +41,14 @@ BOARDNAME := RZ/T1
 
 # ----------------------------------------------------------------------------
 # user source files (system-dependent)
-SRC	= usermain.c
+SRC	= usermain.c appl_main.c sample_command.c
+
+# userinit execute mode in usermain
+CFLAGS += -D_USERINIT_IN_USERMAIN_
 
 # include debug sample code in usermain.c
 ##CFLAGS += -DDEBUG_SAMPLE
+CFLAGS += -D_APPL_SAMPLE_
 
 # user-level libraries
 LDUSRLIBS =
@@ -103,4 +107,5 @@ include ../Makefile.common
 #|* 2017/09/05	APP_VER=0.11の追加
 #|* 2019/09/29	APP_VER=0.60に変更
 #|* 2019/10/08	DRV_CONSOLEを有効にした
+#|* 2019/10/10	サンプルアプリを追加した
 #|

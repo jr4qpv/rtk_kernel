@@ -18,17 +18,15 @@
  */
 
 /*
- *	@(#)usermain.c (sysmain) 2019/10/09
+ *	@(#)usermain.c (sysmain) 2019/10/10
  *	User Main for T-Kernel
  */
 
 #include <basic.h>
 #include <tk/tkernel.h>
 #include <tm/tmonitor.h>
-#include <libstr.h>
 #include <sys/rominfo.h>
-
-typedef INT	(*MAIN_FP)(INT, UB **);
+#include <libstr.h>
 
 /* Device drivers */
 IMPORT ER ConsoleIO( INT ac, UB *av[] );
@@ -168,23 +166,38 @@ EXPORT	INT	usermain( void )
 	debug_sample();
 #endif
 
-#if 1	/* Modified by T.Yokobayashi */
+#ifdef _USERINIT_IN_USERMAIN_	/* Modified by T.Yokobayashi */
 	/* userinit program execute check */
-	MAIN_FP	adr;
-	adr = (MAIN_FP)ROMInfo->userinit;
+	FUNCP	adr;
+	adr = (FUNCP)ROMInfo->userinit;
 	if ( adr != NULL ) {
 		W *p = (W*)adr;
-		/* Check ApSignature & StartAddress & ApType */
-		if ((p[1] == 0x12345678) && (p[2] == (W)p) && (p[3] == 1)) {
-			/* Perform user defined program in usermain() */
-			ercd = (*adr)(0, NULL);
+		/* Check ApSignature & StartAddress */
+		if ((p[1] != 0x12345678) || (p[2] != (W)p)) {
+			tm_printf((UB*)"userinit(%#x) code not found.\n", (int)p);
+			tk_dly_tsk(200);
+			adr = NULL;
 		}
+	}
+
+	if ( adr != NULL ) {
+		/* Perform user defined initialization sequence */
+		ercd = (*adr)(0, NULL);
 	}
 	else {
 		/* User mainstart */
-		tm_putstring((UB*)"usermain.\n");
+		tm_putstring((UB*)"usermain start.\n");
 	}
 #endif	
+
+#ifdef _APPL_SAMPLE_	/* Modified by T.Yokobayashi */
+	/* Sample Application execute */
+	{
+		IMPORT void appl_main(void);
+
+		appl_main();
+	}
+#endif
 
 	/* System shutdown */
 	tm_putstring((UB*)"Push any key to shutdown the T-Kernel.\n");
@@ -218,6 +231,7 @@ EXPORT	INT	usermain( void )
 #|History of "usermain.c"
 #|-----------------------
 #|* 2015/12/22	It's modified.
-#|* 2019/10/09	Added userinit program execute check.
+#|* 2019/10/10	_USERINIT_IN_USERMAIN_ mode support.
+#|* 2019/10/10	Added sample application.(_APPL_SAMPLE_)
 #|
 */

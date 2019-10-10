@@ -7,7 +7,7 @@
  *----------------------------------------------------------------------
  *
  *    Released by T-Engine Forum(http://www.t-engine.org/) at 2012/12/12.
- *    Modified by T-Engine Forum at 2014/07/28.
+ *    Modified by T-Engine Forum at 2014/07/31.
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/04.
  *
  *----------------------------------------------------------------------
@@ -49,70 +49,133 @@
  */
 
 /*
- *	@(#)appl_main.c
+ *	@(#)command.c
  *
  */
+
 #include <basic.h>
 #include <tk/tkernel.h>
 #include <tm/tmonitor.h>
+///#include <t2ex/datetime.h>
+///#include <t2ex/fs.h>
+///#include <t2ex/load.h>
+///#include <device/clk.h>
 
 #include <libstr.h>
 #define	strlen	STRLEN
+#define	strcmp	STRCMP
+#define	strtol	STRTOUL
 
 
 #ifdef	USE_T2EX_FS
-#define	P			printf
-#define	Gets(buf, bufsz)	fgets(buf, bufsz, stdin)
+#define	P		printf
 #else
-#define	P			tm_printf
-#define	Gets(buf, bufsz)	tm_getline(buf)
+#define	P		tm_printf
 #endif
 
-/* Command functions */
-IMPORT	INT	exec_cmd(B *cmd);
-IMPORT	void	init_calendar_date(void);
+#define	N_ARGS		16
 
 /*
- *	Application main entry
- */
-EXPORT	void	appl_main( void )
+	ref command
+*/
+#include "ref_command.c"
+
+
+/*
+	Initialize calendar date
+*/
+EXPORT	void	init_calendar_date(void)
 {
-	B	buf[256];
-	INT	fin, n;
+	/* dummy */
+	
+	return;
+}
 
-	/* initialize calendar date */
-	init_calendar_date();
 
-	/* command processing */
-	for (fin = 0; fin == 0; ) {
-		P("T2EX >> ");
-		Gets(buf, sizeof(buf));
-		for (n = strlen(buf); --n >= 0 && buf[n] <= ' '; ) 
-			buf[n] = '\0';
+/*
+	test command
+*/
+LOCAL	void	cmd_test(INT ac, B *av[])
+{
+	INT i;
 
-		if (buf[0] == 'q') {				/* strncmp "quit" ? */
-			fin = 1;
+	P("ac = %d\n", ac);
+	for (i=0; i<ac; i++) {
+		P("av[%d]=\"%s\"\n", i, av[i]);
+	}
+	
+	return;
+}
 
-		/* t-monitor */
-		} else if (buf[0] == '#') {			/* strncmp t-monitor command ? */
-			tm_command(&buf[1]);
+/*
+	call command
+*/
+LOCAL	void	cmd_call(INT ac, B *av[])
+{
+	FP	fnc;
+	W	p1, p2, p3;
 
-		/* misc. command */
-		} else {
-			if (exec_cmd(buf) == 0) {
-//				P("q[uit]      quit\n");
-				P("# [cmd]     exec t-monitor command\n");
-				P("?           command help\n");
-				P("<command>   misc. command\n");
-			}
+	if (ac < 2) return;
+
+	fnc = (FP)strtol(av[1], NULL, 0);
+	p1 = (ac >= 3) ? strtol(av[2], NULL, 0) : 0;
+	p2 = (ac >= 4) ? strtol(av[3], NULL, 0) : 0;
+	p3 = (ac >= 5) ? strtol(av[4], NULL, 0) : 0;
+
+	(*fnc)(p1, p2, p3);
+}
+
+/*
+	setup parameters
+*/
+LOCAL	INT	setup_param(B *bp, B **av)
+{
+	INT	ac;
+
+	for (ac = 0; ac < N_ARGS; ac++) {
+		while (*((UB*)bp) <= ' ' && *bp != '\0') bp++;
+		if (*bp == '\0') break;
+		av[ac] = bp;
+		while (*((UB*)bp) > ' ') bp++;
+		if (*bp != '\0') {
+			*bp++ = '\0';
 		}
 	}
+	av[ac] = NULL;
+	return ac;
+}
+
+/*
+	execute command
+*/
+EXPORT	INT	exec_cmd(B *cmd)
+{
+	INT	ac;
+	B	*av[N_ARGS];
+
+	ac = setup_param(cmd, av);
+	if (ac < 1) return 0;
+
+	if (strcmp(av[0], "test") == 0) {
+		cmd_test(ac, av);
+	} else if (strcmp(av[0], "ref") == 0) {
+		cmd_ref(ac, av);
+	} else if (strcmp(av[0], "call") == 0) {
+		cmd_call(ac, av);
+	} else if (av[0][0] == '?') {			/* strncmp "?" */
+		P("test     [arg] ...\n");
+		P("ref      [item]\n");
+		P("call     addr [p1 p2 p3]\n");
+	} else {
+		return 0;
+	}
+	return 1;
 }
 
 
 /*----------------------------------------------------------------------
-#|History of "appl_main.c"
-#|------------------------
-#|* 2019/10/10	Modified from T2EX source by T.Yokobayashi.
+#|History of "sample_command.c"
+#|-----------------------------
+#|* 2019/10/10	Modified from T2EX "command.c" source by T.Yokobayashi.
 #|
 */

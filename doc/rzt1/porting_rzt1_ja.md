@@ -113,9 +113,7 @@ export GNU_BD='/C/Program Files (x86)/GNU Tools ARM Embedded/6 2017-q2-update'
 
 |ビルドフォルダ                            |機種                |備考     |
 |:-----------------------------------------|:-------------------|:--------|
-|$BD/kernel/sysmain/build/rpi_bcm283x      |Raspberry Pi Zero/1 |         |
-|$BD/kernel/sysmain/build/rpi_bcm283x.rpi2 |Raspberry Pi 2      |         |
-|$BD/kernel/sysmain/build/rpi_bcm283x.rpi3 |Raspberry Pi 3      |         |
+|$BD/kernel/sysmain/build/app_rzt          |RSK評価基板         |         |
 
 * `.debug`ついたフォルダでコンパイルするとデバック情報を付加する
 * `make clean`で生成されたファイルを削除
@@ -130,11 +128,11 @@ export GNU_BD='/C/Program Files (x86)/GNU Tools ARM Embedded/6 2017-q2-update'
 
 #### コンパイルの実行例
 ```
-$ cd $BD/monitor/tmmain/build/rpi_bcm283x.rpi2
+$ cd $BD/monitor/tmmain/build/app_rzt1
 $ make
-$ cd $BD/config/build/rpi_bcm283x.rpi2
+$ cd $BD/config/build/app_rzt1
 $ make
-$ $BD/kernel/sysmain/build/rpi_bcm283x.rpi2
+$ $BD/kernel/sysmain/build/app_rzt1
 $ make
 ```
 
@@ -154,13 +152,15 @@ T-Kernelの起動
 2. `rominfo-rom.bin`
 3. `kernel-rom.bin`
 
-起動メッセージが下記のように表示されたら、無事T-Kernelが起動。この例では、アプリの実行コードが認識できないのでT-Monitorの入力待ちに戻る。
+起動メッセージが下記のように表示されたら、無事T-Kernelが起動。この例では、アプリの実行コードが認識できないので、サンプルアプリ(簡易シェル)の入力待ちとなっている。
 
 ```
-T-Kernel Version 2.02.00 for RZ/T1 r0.60 [Fri Sep 20 13:49:18     2019]
+T-Kernel Version 2.02.00 for RZ/T1 r0.60 [Thu Oct 10 16:35:44     2019]
 
-Userinit(0x30080000) code not found.
-TM>
+ConsoleIO - OK
+userinit(0x30080000) code not found.
+usermain start.
+T2EX >>
 ```
 
 メモリマップ
