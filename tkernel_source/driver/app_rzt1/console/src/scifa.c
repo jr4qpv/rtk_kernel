@@ -2,14 +2,13 @@
  *----------------------------------------------------------------------
  *    T-Kernel Software Library
  *
- *    Copyright(C) 2015-2018 by T.Yokobayashi.
+ *    Copyright(C) 2016-2019 by T.Yokobayashi.
  *----------------------------------------------------------------------
  */
 
 /*
- *	@(#)scifa.c (driver) 2018/04/20
- *
- *       シリアル回線低レベルドライバ (RZT1 SCIFA 用)
+ *	@(#)scifa.c (console) 2019/04/19
+ *  シリアル回線低レベルドライバ (RZT1 SCIFA 用)
  */
 
 #include "line_drv.h"
@@ -155,7 +154,7 @@ LOCAL	 ER	init_sio(LINE_INFO *li, RsMode mode)
 	scbase->FCR.WORD = SCFCRx_TFRST | SCFCRx_RFRST; // 送受信FIFOクリア
 	scbase->SMR.WORD = smr | cks;			// 通信ﾌｫｰﾏｯﾄ,ｸﾛｯｸｿｰｽ設定
 	scbase->BRR_MDDR.BRR = brr;				// ビットレート設定
-	WaitUsec(15000000 / mode.baud);			// 1bit分確実に待たせる
+	WaitUsec(SERICLK / mode.baud);			// 1bit分確実に待たせる
 	rscs_ctrl(li);							// SCFCR設定(FIFO/RSCSフロー設定)
 	scbase->FSR.WORD &= 0x0000;				// 割込ステータスクリア
 	scbase->SCR.WORD = SCSCRx_RIE|SCSCRx_TE|SCSCRx_RE;	// 割込・送受信許可
@@ -838,6 +837,7 @@ LOCAL void	scifa_up(LINE_INFO *li)
 /*----------------------------------------------------------------------
 #|History of "scifa.c"
 #|--------------------
-#|* 2016/07/12	[app_rzt1]用に、[tef_em1d]の"ns16450.c"を参考に作成
+#|* 2016/07/12	New created.(By T.Yokobayashi)
+#|  [app_rzt1]用に、[tef_em1d]の"ns16450.c"を参考に作成
 #|
 */

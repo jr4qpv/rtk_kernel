@@ -11,10 +11,14 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by The Japan Steel Works,LTD. since 2018/09/29
+ *
+ *----------------------------------------------------------------------
  */
 
 /*
- *	console_drv.c	Console/Low-level serial I/O driver
+ *	@(#)console_drv.c	Console/Low-level serial I/O driver  2019/07/06
  *
  *	Console driver : System-independent
  */
@@ -22,6 +26,7 @@
 #include <basic.h>
 #include <sys/consio.h>
 #include <tk/tkernel.h>
+#include <tm/tmonitor.h>
 #include <tk/util.h>
 #include <device/serialio.h>
 #include <device/rs.h>
@@ -30,7 +35,6 @@
 #include <libstr.h>
 #include <sys/queue.h>
 #include <sys/debug.h>
-#include <tm/tmonitor.h>
 #include <sys/rominfo.h>
 
 #include <sys/svc/ifconsio.h>
@@ -44,10 +48,16 @@ EXPORT	W	DebugPort;	/* Serial port number for debugging */
 
 IMPORT	ER	con_def_subsys(W svc, W pri, void *svcent, void *brkent);
 
+/* 下記標準T-Kernel関数との違いはイベントフラグにTA_NODISWAIオプションがない */
 IMPORT	ER	consMLock(FastMLock *lock, INT no);
 IMPORT	ER	consMUnlock(FastMLock *lock, INT no);
 IMPORT	ER	consCreateMLock(FastMLock *lock, UB *name);
 IMPORT	ER	consDeleteMLock(FastMLock *lock);
+
+
+#define	USE_PORT_TID	1	/* タスクIDと標準ポートの関連付機能(1対1のみ) */
+#define	CR_DELETE		1	/* 入力時のCRコード削除機能(コメントで無効) */
+
 
 /*----------------------------------------------------------------------
 	Console port processing
@@ -61,6 +71,7 @@ typedef struct {
 	W	conf;		/* Configuration			*/
 	FastMLock lock;		/* Lock for input-output		*/
 	ID	flg;		/* Event flag for input-output		*/
+	ID	stsflg;		/* 状態イベントフラグ			*/
 
 	UB	*in_buf;	/* Input buffer				*/
 	UW	in_bufsz;	/* Input buffer size			*/
@@ -87,10 +98,19 @@ typedef struct {
 
 	W	snd_tmout;	/* Send time out			*/
 	W	rcv_tmout;	/* Receive time out			*/
+
+#ifdef USE_PORT_TID
+	ID	port_tid;	/* Task ID for standard console port */
+#endif	
+#ifdef CR_DELETE
+	W	cr_delete;	/* CR input delete mode		*/
+#endif	
 } CONSCB;
 
 LOCAL	QUEUE	ConsPort;		/* Console port	        	*/
 LOCAL	UH	last_port = 0;		/* Last port number		*/
+
+#define	SYS_PORTNO	(2)		/* システム使用ポート番号	*/
 
 LOCAL	FastLock	ConsLock;	/* Lock the overall console	*/
 
@@ -98,6 +118,10 @@ LOCAL	FastLock	ConsLock;	/* Lock the overall console	*/
 #define	DEF_OUBUFSZ	1024		/* Output buffer size		*/
 #define	MIN_BUFSZ	128		/* Minimum buffer size		*/
 #define	HIST_BUFSZ	2048		/* History buffer size  	*/
+
+/* リングバッファのため正味の有効サイズは１小さくなる */
+#define	GETBUFSZ(bufsz)		( ((bufsz) > 0)? (bufsz) - 1: 0 )
+#define	SETBUFSZ(bufsz)		( (bufsz) + 1 )
 
 #define	INPTRMASK(p, ptr)	((ptr) % ((p)->in_bufsz))
 					/* Input buffer pointer mask	*/
@@ -152,6 +176,16 @@ LOCAL	CONSCB	*check_port(W port)
 	QUEUE	*q;
 
 	if (port <= 0) return NULL;
+
+#ifdef USE_PORT_TID
+	ID tid = tk_get_tid();				/* 現在のタスクIDを取得 */
+	if (port == SYS_PORTNO) {			/* 標準ポート? */
+		q = QueSearch(&ConsPort, &ConsPort, tid, offsetof(CONSCB, port_tid));
+		if (q != &ConsPort)
+			return (CONSCB*)q;			/* TIDと関連付けされているポート */
+	}
+#endif
+	
 	q = QueSearch(&ConsPort, &ConsPort, port, offsetof(CONSCB, port));
 	return (q == &ConsPort) ? NULL : (CONSCB*)q;
 }
@@ -199,6 +233,8 @@ LOCAL	W	put_consbuf(CONSCB *p, W c, W tmout)
 		if (c == XON || (p->rcv_xoff && (p->flowc & IXANY))) {
 			if (p->rcv_xoff) {	/* Event occurs */
 				if (p->flg) tk_set_flg(p->flg, FLG_OU_EVT);
+				if (p->stsflg)
+					tk_set_flg(p->stsflg, TSE_WRITEOK);
 				p->rcv_xoff = 0;
 			}
 			return 0;
@@ -219,7 +255,10 @@ LOCAL	W	put_consbuf(CONSCB *p, W c, W tmout)
 	p->in_wptr = nptr;
 
 	/* Generate the event when the input-buffer is not empty */
-	if (ptr == p->in_rptr) tk_set_flg(p->flg, FLG_IN_EVT);
+	if (ptr == p->in_rptr) {
+		tk_set_flg(p->flg, FLG_IN_EVT);
+		if (p->stsflg) tk_set_flg(p->stsflg, TSE_READOK);
+	}
 
 	/* Receive flow control is unnecessary */
 	return 0;
@@ -302,9 +341,50 @@ LOCAL	W	get_consbuf(CONSCB *p, W tmout)
 	/* Event occurs when the buffer is not full */
 	if (ptr == OUPTRMASK(p, p->ou_wptr + 1)) {
 		tk_set_flg(p->flg, FLG_OU_EVT);
+		if (p->stsflg) tk_set_flg(p->stsflg, TSE_WRITEOK);
 	}
 
 	return c;
+}
+/*
+	入力可能文字数を返す
+*/
+LOCAL	W	check_inbuf(CONSCB *p)
+{
+	W	alen;
+
+	if (p->conf == CONF_BUFIO) {
+		alen = INPTRMASK(p, p->in_wptr + p->in_bufsz - p->in_rptr);
+	} else {
+		if (serial_in(p->conf, NULL, 0, &alen, 0) < 0) alen = 0;
+	}
+
+	return alen;
+}
+/*
+	出力可能文字数を返す
+*/
+LOCAL	W	check_oubuf(CONSCB *p)
+{
+	W	alen;
+
+	if ((p->disable & 0x1) != 0) return 0;	/* 出力停止中 */
+
+	if (p->conf == CONF_BUFIO) {
+		alen = OUPTRMASK(p, p->ou_rptr + p->ou_bufsz - 1 - p->ou_wptr);
+	} else {
+		if (serial_out(p->conf, NULL, 0, &alen, 0) < 0) alen = 0;
+
+		/* シリアルポートの送信バッファサイズが 0 の場合、送信可能の
+		 * 状態イベントは発生しないため、ここで alen = 0 を返してしま
+		 * うと、送信可能となるタイミングが得られなくなる。全く送信で
+		 * きない状況が長時間続くことはまずないので、常に送信可能とし
+		 * ておく。
+		 */
+		if (alen <= 0) alen = 1;
+	}
+
+	return alen;
 }
 /*
  *	One character input
@@ -318,7 +398,7 @@ LOCAL	W	cons_getch(CONSCB *p)
 		return read_consbuf(p); /* Input from the input-buffer */
 
 	/* Input the serial port */
-	return (serial_in(p->conf, &c, 1, &alen, p->rcv_tmout) < 0)? -1: c;
+	return (serial_in(p->conf, (B*)&c, 1, &alen, p->rcv_tmout) < 0) ? -1 : c;
 }
 /*
  *	Output the one character
@@ -333,7 +413,7 @@ LOCAL	W	cons_putch(CONSCB *p, B c)
 		return write_consbuf(p, c);
 
 	/* Output the serial port */
-	return (serial_out(p->conf, &c, 1, &alen, p->snd_tmout) < 0)? -1: 0;
+	return (serial_out(p->conf, (B*)&c, 1, &alen, p->snd_tmout) < 0) ? -1 : 0;
 }
 /*
  *	Edit line input
@@ -473,9 +553,11 @@ LOCAL	W	_console_out(W port, B *buf, UW len)
 	W	alen = 0;
 	ER	er;
 
-	/* Check the address */
-	er = ChkSpaceR((void*)buf, len);
-	if (er < E_OK && er != E_RSFN) return 0;
+	if (buf != NULL) {
+		/* Check the address */
+		er = ChkSpaceR((void*)buf, len);
+		if (er < E_OK && er != E_RSFN) return 0;
+	}
 
 	/* Check the port number */
 	if ((p = get_port(port)) != NULL) {
@@ -483,7 +565,9 @@ LOCAL	W	_console_out(W port, B *buf, UW len)
 		/* Lock */
 		if (LockIn(&p->lock, OU_LOCK) < 0) goto EEXIT;
 
-		for (; alen < len; alen++) {
+		if (buf == NULL) {
+			alen = check_oubuf(p);
+		} else for (; alen < len; alen++) {
 			if ((c = *buf++) == LF && p->newline) {
 				if (cons_putch(p, CR)) break;
 			}
@@ -506,8 +590,10 @@ LOCAL	W	_console_in(W port, B *buf, UW len)
 	W	c;
 	W	alen = 0;
 
-	/* Check the address */
-	if (ChkSpaceRW((void*)buf, len)) return 0;
+	if (buf != NULL) {
+		/* Check the address */
+		if (ChkSpaceRW((void*)buf, len)) return 0;
+	}
 
 	/* Check the port number */
 	if ((p = get_port(port)) != NULL) {
@@ -515,11 +601,17 @@ LOCAL	W	_console_in(W port, B *buf, UW len)
 		if (LockIn(&p->lock, IN_LOCK) < 0) goto EEXIT;
 
 		/* Input the data */
-		if (p->input == EDIT && len > 1) {
+		if (buf == NULL) {
+			alen = check_inbuf(p);
+		} else if (p->input == EDIT && len > 1) {
 			alen = edit_input(p, buf, len);
 		} else {
 			while (alen < len) {
 				if ((c = cons_getch(p)) < 0) break;
+#ifdef CR_DELETE
+				if (p->cr_delete != 0)
+					if (c == CR && p->input != RAW) continue;
+#endif				
 				if (c == CR && p->input != RAW) c = LF;
 				if (p->echo) {		/* Echo*/
 					if (c == LF && p->input != RAW)
@@ -564,6 +656,7 @@ LOCAL	W	_console_ctl(W port, W req, W arg)
 				if (!p->h_buf) {
 					if (!(p->h_buf = Malloc(HIST_BUFSZ)))
 							rtn = -1;
+					else	p->h_buf[0] = 0;
 				}
 				if (rtn == 0) p->h_buf[0] = 0;
 			} else if (p->h_buf) {
@@ -604,9 +697,19 @@ LOCAL	W	_console_ctl(W port, W req, W arg)
 			rtn = 0;
 			p->rcv_tmout = (arg < 0) ? -1 : arg;	break;
 		case RCVBUFSZ|GETCTL:
-			rtn = p->in_bufsz;			break;
+			rtn = GETBUFSZ(p->in_bufsz);		break;
 		case SNDBUFSZ|GETCTL:
-			rtn = p->ou_bufsz;			break;
+			rtn = GETBUFSZ(p->ou_bufsz);		break;
+		case STSEVENT|GETCTL:
+			rtn = p->stsflg;			break;
+		case STSEVENT:
+			if (arg >= 0 &&
+			    (p->conf == CONF_BUFIO ||
+			     serial_ctl(p->conf, DN_STSEVENT, (UW*)&arg) >= 0)) {
+				rtn = 0;
+				p->stsflg = arg;
+			}
+			break;
 		case 0x8f:
 			rtn = 0;
 			p->wup_char = arg;
@@ -615,6 +718,10 @@ LOCAL	W	_console_ctl(W port, W req, W arg)
 			break;
 		case 0x8e:
 			rtn = 0;	p->disable = arg;	break;
+#ifdef CR_DELETE
+		case 0x70:
+			rtn = 0;	p->cr_delete = arg;		break;
+#endif			
 		}
 		p->in_use--;		/* Use-count - -*/
 	}
@@ -629,11 +736,19 @@ LOCAL	W	_console_put(W port, B *buf, UW len, W tmout)
 	CONSCB	*p;
 	W	alen = 0;
 
-	/* Check the address */
-	if (ChkSpaceR((void*)buf, len)) return 0;
+	if (buf != NULL) {
+		/* Check the address */
+		if (ChkSpaceR((void*)buf, len)) return 0;
+	}
 
 	/* Check the port number */
 	if ((p = get_port(port)) != NULL) {
+		if (buf == NULL) {
+			/* 書き込み可能なバイト数 */
+			alen = INPTRMASK(p, p->in_rptr + p->in_bufsz - 1 - p->in_wptr);
+			return alen;
+		}
+		
 		/* Do not lock */
 		if (p->conf == CONF_BUFIO && (p->disable & 0x2) == 0) {
 			for (; alen < len; alen++) {
@@ -654,11 +769,19 @@ LOCAL	W	_console_get(W port, B *buf, UW len, W tmout)
 	W	c;
 	W	alen = 0;
 
-	/* Check the address */
-	if (ChkSpaceRW((void*)buf, len)) return 0;
+	if (buf != NULL) {
+		/* Check the address */
+		if (ChkSpaceRW((void*)buf, len)) return 0;
+	}
 
 	/* Check the port number */
 	if ((p = get_port(port)) != NULL) {
+		if (buf == NULL) {
+			/* 読み込み可能なバイト数 */
+			alen = OUPTRMASK(p, p->ou_wptr + p->ou_bufsz - p->ou_rptr);
+			return alen;
+		}
+		
 		/* Do not lock */
 		if (p->conf == CONF_BUFIO) {
 			for (; alen < len; alen++) {
@@ -694,6 +817,7 @@ LOCAL	W	delete_cons(CONSCB *p)
 	if (p->conf >= 0) {	/* Serial line port */
 		par[0] = par[1] = 0;
 		serial_ctl(p->conf, RS_EXTFUNC, par);
+		if (p->stsflg) serial_ctl(p->conf, DN_STSEVENT, par);
 	}
 
 	/* Release the buffer */
@@ -749,6 +873,7 @@ static	union objname	name = {{ "con0" }};
 	if (conf == CONF_BUFIO) {
 		if ((sz = arg[2]) < MIN_BUFSZ)
 				sz = sz ? MIN_BUFSZ : DEF_INBUFSZ;
+		sz = SETBUFSZ(sz);
 		if (!(p->in_buf = Malloc(sz)))	goto EEXIT;
 		p->in_bufsz = sz;
 	}
@@ -756,6 +881,7 @@ static	union objname	name = {{ "con0" }};
 	if (conf == CONF_BUFIO) {
 		if ((sz = arg[3]) < MIN_BUFSZ)
 				sz = sz ? MIN_BUFSZ : DEF_OUBUFSZ;
+		sz = SETBUFSZ(sz);
 		if (!(p->ou_buf = Malloc(sz)))	goto EEXIT;
 		p->ou_bufsz = sz;
 	}
@@ -807,15 +933,16 @@ LOCAL	W	_console_conf(W req, UW* arg)
 		break;
 
 	case CS_DELETE:		/* Delete the console port */
-		if (arg[0] > 2 && (p = check_port(arg[0]))) n = delete_cons(p);
+		if (arg[0] > SYS_PORTNO &&
+			(p = check_port(arg[0]))) n = delete_cons(p);
 		else	n = -1;
 		break;
 
 	case CS_GETCONF:		/* Fetch the console configuration */
 		if ((p = check_port(arg[0])) != NULL) {
 			arg[1] = p->conf;
-			arg[2] = p->in_bufsz;
-			arg[3] = p->ou_bufsz;
+			arg[2] = GETBUFSZ(p->in_bufsz);
+			arg[3] = GETBUFSZ(p->ou_bufsz);
 			n = 0;
 		} else	n = -1;
 		break;
@@ -838,12 +965,30 @@ LOCAL	W	_console_conf(W req, UW* arg)
 
 	case CS_GETPORT:		/* Fetch the standard console port */
 		n = 1;		/* Default #1 */
+#ifdef USE_PORT_TID
+		p = check_port(SYS_PORTNO);	/* standard console port #2 */
+		if (p != NULL) n = p->port;
+#endif		
 		arg[0] = check_port(n) ? n : 1;
 		n = 0;
 		break;
 
 	case CS_SETPORT:		/* Set the standard console port */
+#ifdef USE_PORT_TID
+		n = arg[0];
+		if ( (n > SYS_PORTNO) && ((p = check_port(n)) != NULL) ) {
+			if (arg[1] == TSK_SELF)		/* =0 ? */
+				p->port_tid = tk_get_tid();
+			else
+				p->port_tid = arg[1];
+			n = 0;			/* Normal */
+		}
+		else {
+			n = -1;			/* Error */
+		}
+#else		
 		n = -1;
+#endif		
 		break;
 
 	default:
@@ -880,6 +1025,7 @@ LOCAL	ER	console_io_entry(void *para, W fn, void *gp)
 	  case CONSIO_CONSOLE_CTL_FN:
 		{ CONSIO_CONSOLE_CTL_PARA *p = para;
 		return _console_ctl(p->port, p->req, p->arg); }
+
 	}
 	return E_RSFN;
 }
@@ -941,17 +1087,36 @@ EXPORT	ER	console_startup( BOOL StartUp )
 	/* Create the standard console port (#2 : Serial#1) */
 	arg[1] = DebugPort;
 	_console_conf(CS_CREATE, (UW*)arg);
+	last_port = SYS_PORTNO;
 
 	/* Initialize the standard console port */
 	_console_ctl(1, ECHO, 1);
 	_console_ctl(1, INPUT, EDIT);
 	_console_ctl(1, NEWLINE, 1);
 	_console_ctl(1, FLOWC, IXON | IXOFF);
-	if (!_isDebugMode()) _console_ctl(1, 0x8e, 0x3);
-				/* Stop sending/receiving */
+///	if (!_isDebugMode()) _console_ctl(1, 0x8e, 0x3);
+///				/* Stop sending/receiving */
+
+#if 1
+	_console_ctl(2, ECHO, 1);
+	_console_ctl(2, INPUT, EDIT);
+	_console_ctl(2, NEWLINE, 1);
+	_console_ctl(2, FLOWC, IXON | IXOFF);
+#endif
 
 	/* Register the subsystem :
 		Overwrite the registration in device common manager */
 	return con_def_subsys(CONSIO_SVC, CONSIO_PRI,
 					console_io_entry, console_break);
 }
+
+
+/*----------------------------------------------------------------------
+#|History of "console_drv.c"
+#|--------------------------
+#|* 2018/09/29	[tef_em1d]用の"console_drv.c"を参考に作成。(By T.Yokobayashi)
+#|* 2018/10/10	CANONICAL入力モードではCRは無視する機能作成。(CR_DELETE)
+#|* 2018/10/17	console_in(),console_out()でbuf=NULLは入出力可能Byte数を返す。
+#|* 2018/12/17	タスクIDと標準ポートの関連付機能。(USE_PORT_TID)
+#|
+*/

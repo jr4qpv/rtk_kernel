@@ -15,3 +15,4 @@ rominfo-ram
 rominfo-rom
 *.a
 *.uo
+*.bak
