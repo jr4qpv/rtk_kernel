@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)config.c (monitor) 2019/10/09
+ *	@(#)config.c (monitor) 2019/10/10
  *
  *       system-related processing / system configuration information
  *
@@ -125,7 +125,7 @@ EXPORT	UW	DipSwStatus(void)
 	UW	d;
 
 #ifdef BOARD_RZT1_RSK
-	d = 0;
+	d = (~PORTU.PIDR.BIT.B7) & 0x1;		/* PU7(IN) SW4-6状態を最下位Bitにｾｯﾄ */
 	
 	if (PORT3.PIDR.BIT.B5 == 0)			/* P35(In) NMI-SW1 ? */
 		d |= SW_MON;					/* SW ON='L'で、T-Mmonitor強制起動 */
