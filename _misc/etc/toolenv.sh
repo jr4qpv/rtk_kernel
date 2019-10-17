@@ -73,9 +73,9 @@ then
 elif test ${TC_KIND} = MAC_ARM_GCC_EMB
 then
   echo "--- macOS GNU ARM Embedded ---"
-  #export GNU_BD=/usr/local
+  export GNU_BD=/usr/local
   #export GNU_BD=/opt/gnu_arm/gcc-arm-none-eabi-5_4-2016q2
-  export GNU_BD=/opt/gnuarm/gcc-arm-none-eabi-7-2017-q4-major
+  #export GNU_BD=/opt/gnuarm/gcc-arm-none-eabi-7-2017-q4-major
   export _GNU_CONFIG=arm-none-eabi-
   #export PATH=$PATH:${GNU_BD}/bin
 elif test ${TC_KIND} = LINUX_ARM_GCC_EMB
@@ -85,9 +85,16 @@ then
   export GNU_BD=/usr
   export _GNU_CONFIG=arm-none-eabi-
   #export PATH=$PATH:${GNU_BD}/bin
-else
+elif test ${TC_KIND} = TOOL
+then
   echo "--- TOOL ---"
+else
+  # for ${TC_KIND} = NONE
 fi
 
-alias gdbarm='"${GNU_BD}/bin/${_GNU_CONFIG}gdb"'
-# cd $BD
+if [ ! -z "${BD}" ]; then
+    alias cdtk='cd ${BD}'
+fi
+if [ ! -z "${GNU_BD}" ]; then
+    alias gdbarm='"${GNU_BD}/bin/${_GNU_CONFIG}gdb"'
+fi
