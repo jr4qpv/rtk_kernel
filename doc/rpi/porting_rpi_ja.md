@@ -45,7 +45,7 @@ Gitリポジトリ
 * [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  6 2017-q2-update
 
 #### 【Mac】
-* macOS v10.14.6 Mojave
+* macOS v10.15 Catalina
 * [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  7-2017-q4-major
 
 #### 【Linux】
@@ -379,12 +379,13 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 参考リンク
 ---------
 1. [【msys2】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2016/08/31/msys2-arm-gcc/)
-2. [【macOS】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2016/09/03/macos-arm-gcc/)
+2. [【macOS】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2018/05/16/macos-gcc-arm-brew-install/)
 3. [【Ubuntu 18.04 LTS Server】ARMのコンパイル環境を構築する](https://www.yokoweb.net/2018/05/16/ubuntu-18_04-gcc-arm-install/)
 4. [【Raspberry Pi】u-bootを動かす](https://www.yokoweb.net/2016/08/13/raspberrypi-uboot/)
 5. [【Ubuntu 18.04/16.04 LTS Server】u-bootをコンパイルする](https://www.yokoweb.net/2016/08/11/ubuntu-uboot-gcc/)
 6. [【Raspberry Pi】参考になるベアメタルなドキュメント](https://www.yokoweb.net/2016/09/04/raspberrypi-document/)
 7. [【Raspberry Pi】u-bootでJTAGピンを有効にする](https://www.yokoweb.net/2016/08/23/raspberrypi-jtag/)
+8. [【Raspberry Pi】u-bootでTFTPサーバからイーサネット経由のファイル読込み](https://www.yokoweb.net/2019/10/16/raspberrypi-u-boot-tftp-file-get/)
 
 作者関連サイト
 -------------

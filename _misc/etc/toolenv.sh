@@ -90,6 +90,7 @@ then
   echo "--- TOOL ---"
 else
   # for ${TC_KIND} = NONE
+  echo "" > /dev/null
 fi
 
 if [ ! -z "${BD}" ]; then

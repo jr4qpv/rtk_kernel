@@ -88,8 +88,8 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 * [msys2](https://msys2.github.io/)
 * [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  6 2017-q2-update
 
-#### 【Mac】
-* macOS v10.14.6 Mojave
+#### 【macOS】
+* macOS v10.15 Catalina
 * [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  7-2017-q4-major
 
 #### 【Linux】
