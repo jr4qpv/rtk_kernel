@@ -95,6 +95,7 @@ fi
 
 if [ ! -z "${BD}" ]; then
     alias cdtk='cd ${BD}'
+    alias tk-put-rpi='${BD}/../_misc/etc/tftp-put-rpi'
 fi
 if [ ! -z "${GNU_BD}" ]; then
     alias gdbarm='"${GNU_BD}/bin/${_GNU_CONFIG}gdb"'
