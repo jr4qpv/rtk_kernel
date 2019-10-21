@@ -24,10 +24,12 @@ T-Kernelに一緒にリンクして動かすサンプルアプリは同梱して
 
 本プロジェクトには、参考にT2EXのコードも同梱しているが、現状ではT2EXの機能は殆ど利用してない。（簡易シェルのコードはサンプルとして利用）
 
-* t2ex用のビルドフォルダも残っているが、メンテナンスしていない。
+* t2ex用のビルドフォルダも残っているが現状メンテナンスしていない。（今後、ネットワークドライバ等が必要になった時には使うかも？）
 
 Gitリポジトリ
 ---------------
+GitHubの下記URL。
+
 <https://github.com/jr4qpv/yt-kernel.git>
 
 
@@ -37,12 +39,15 @@ Gitリポジトリ
 
 <https://www.yokoweb.net/dokuwiki/develop/yt-kernel/start>
 
+### 関連記事
+
+* [【T-Kernel】Raspberry Pi と Renesas RZ/T1 用の T-Kernel「yt-kernel」をGitHubに公開](https://www.yokoweb.net/2019/09/29/raspberrypi-rzt1-ytkernel-github/)
 
 対応機種
 ----------
 
 ### １）Raspberry Pi 対応機種
-TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake変数。
+`TYPE_RPI`は、コンパイル時にRasperry Piの機種を区別しているmake変数。
 
 |モデル        | TYPE_RPI |備考                    |
 |:-------------|:--------:|:-----------------------|
@@ -52,6 +57,7 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 |Pi 3 Model B  | 3        |32bit,シングルコア動作  |
 
 ### ２）Renesas RZ/T1 対応機種
+`TYPE_RZT`は、コンパイル時にRZ/T1の機種を区別しているmake変数。
 
 |モデル                               | TYPE_RZT |備考                    |
 |:------------------------------------|:--------:|:-----------------------|
@@ -81,7 +87,7 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 
 ビルド環境
 ----------
-作者が確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。
+作者が確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。コンパイル環境のインストール手順などは「[サポートサイト](https://www.yokoweb.net/dokuwiki/develop/yt-kernel/start)」を参照。
 
 #### 【Windows】
 * Windows10 Pro x64 ver1903
@@ -90,7 +96,7 @@ TYPE_RPIは、コンパイル時にRasperry Piの機種を区別しているmake
 
 #### 【macOS】
 * macOS v10.15 Catalina
-* [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  7-2017-q4-major
+* [GNU ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)  8-2018-q4-major
 
 #### 【Linux】
 * [Ubuntu 18.04 LTS Server](https://www.ubuntulinux.jp/home)
@@ -124,11 +130,17 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 ----
 本プログラムの使用にあたっては、使用者自身の責任で行ってください。作者は何の保証もしないし、本プログラムを利用した上で生じたいかなる障害や損害についても、作者は責任を負いません。
 
-
 補足
 ----
 
 * 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結してこれ以上の更新は行いません。今後は、この「[yt-kernel](https://github.com/jr4qpv/yt-kernel)」に移行し更新していきます。
+
+作者関連サイト
+---------------
+
+* [GitHub (jr4qpv)](https://github.com/jr4qpv/)
+* [新石器Wiki](https://www.yokoweb.net/dokuwiki/)
+* [The modern stone age.](https://www.yokoweb.net/)
 
 来歴
 ----
