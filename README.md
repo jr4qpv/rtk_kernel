@@ -133,7 +133,7 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 補足
 ----
 
-* 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結してこれ以上の更新は行いません。今後は、この「[yt-kernel](https://github.com/jr4qpv/yt-kernel)」に移行し更新していきます。
+* 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結して、今後はこの「[yt-kernel](https://github.com/jr4qpv/yt-kernel)」に移行し更新していきます。
 
 作者関連サイト
 ---------------
