@@ -17,7 +17,7 @@
  */
 
 /*
- *	@(#)consio.h (sys) 2019/04/08
+ *	@(#)consio.h (sys) 2019/11/16
  *
  *	Console I/O
  */
@@ -39,7 +39,7 @@ extern "C" {
 
 /* Default port definition */
 #define CONSOLE_PORT	1	/* Debug console */
-#define RS_PORT		2	/* Download serial port */
+#define RS_PORT		2	/* Standard console serial port */
 
 IMPORT int _GetChar( void );
 IMPORT int _PutChar( int c );
@@ -86,7 +86,9 @@ IMPORT int RS_ioctl( int req, int arg );
 #define IXOFF		0x04U	/* XON/XOFF input flow control */
 
 #if 1	/* [By T.Yokobayashi] */
-#define	CRDELETE	0x70U	/* CR input delete mode */
+#define	CRDROP		16		/* CR input drop delete mode */
+#define	LFNONE		17		/* LF input code not stored and no echo back */
+	
 #define	STSEVENT	0x85U	/* 状態イベント(T-Kernelイベントフラグ )*/
 
 /* State event */
@@ -145,6 +147,11 @@ IMPORT W cons_conf(W req, UW *arg);
 #define CONF_SELF	(-1)	/* Self console				*/
 #define CONF_BUFIO	(-2)	/* Buffer IO				*/
 
+#if 0	/* [By T.Yokobayashi] */
+#define CONF_LBUFIO_0	(32)		/* LBUFCONS port #0			*/
+#define CONF_LBUFIO(n)	((n)+32)	/* LBUFCONS port #N			*/
+#endif	
+	
 /* ------------------------------------------------------------------------ */
 
 /*
@@ -181,8 +188,9 @@ IMPORT ER console_ctl(W port, W req, W arg);
 /*----------------------------------------------------------------------
 #|History of "consio.h"
 #|---------------------
-#|* 2018/10/10	Add CRDELETE(0x70U) define.(By T.Yokobayashi)
-#|* 2019/02/06	Add TSE_READOK,TSE_WRITEOK,TSE_ERROR,TSE_STATE define.
+#|* 2018/10/10	Modifined based on T-Kernel "sys/consio.h"(By T.Yokobayashi)
+#|* 2018/12/19	Add TSE_READOK,TSE_WRITEOK,TSE_ERROR,TSE_STATE define.
 #|* 2019/04/18	Add STSEVENT define.
+#|* 2019/11/16	Add CRDROP,LFNONE define.
 #|
 */
