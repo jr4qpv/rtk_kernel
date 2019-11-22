@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)console_drv.c	Console/Low-level serial I/O driver  2019/07/06
+ *	@(#)console_drv.c	Console/Low-level serial I/O driver  2019/11/22
  *
  *	Console driver : System-independent
  */
@@ -48,7 +48,10 @@ EXPORT	W	DebugPort;	/* Serial port number for debugging */
 
 IMPORT	ER	con_def_subsys(W svc, W pri, void *svcent, void *brkent);
 
-/* 下記標準T-Kernel関数との違いはイベントフラグにTA_NODISWAIオプションがない */
+/*
+ * 下記標準T-Kernel関数との違いは、イベントフラグに生成時にフラグIDを戻すのと
+ * TA_NODISWAIオプションがない
+ */
 IMPORT	ER	consMLock(FastMLock *lock, INT no);
 IMPORT	ER	consMUnlock(FastMLock *lock, INT no);
 IMPORT	ER	consCreateMLock(FastMLock *lock, UB *name);
@@ -56,7 +59,6 @@ IMPORT	ER	consDeleteMLock(FastMLock *lock);
 
 
 #define	USE_PORT_TID	1	/* タスクIDと標準ポートの関連付機能(1対1のみ) */
-#define	CR_DELETE		1	/* 入力時のCRコード削除機能(コメントで無効) */
 
 
 /*----------------------------------------------------------------------
@@ -85,7 +87,13 @@ typedef struct {
 
 	UB	*h_buf;		/* History buffer			*/
 
+#if defined(CRDROP) || defined(LFNONE)
+	UW	rsv:9;
+	UW	crdrop:1;	/* CR input drop delete mode */
+	UW	lfnone:1;	/* LF input code not stored and no echo back */
+#else	
 	UW	rsv:11;
+#endif	
 	UW	rcv_xoff:1;	/* "XOFF" receive status		*/
 	UW	disable:2;	/* Send and Receive disabled status	*/
 	UW	echo:1;		/* The presence or absence of echo	*/
@@ -101,9 +109,6 @@ typedef struct {
 
 #ifdef USE_PORT_TID
 	ID	port_tid;	/* Task ID for standard console port */
-#endif	
-#ifdef CR_DELETE
-	W	cr_delete;	/* CR input delete mode		*/
 #endif	
 } CONSCB;
 
@@ -355,7 +360,8 @@ LOCAL	W	check_inbuf(CONSCB *p)
 
 	if (p->conf == CONF_BUFIO) {
 		alen = INPTRMASK(p, p->in_wptr + p->in_bufsz - p->in_rptr);
-	} else {
+	}
+	else {
 		if (serial_in(p->conf, NULL, 0, &alen, 0) < 0) alen = 0;
 	}
 
@@ -372,7 +378,8 @@ LOCAL	W	check_oubuf(CONSCB *p)
 
 	if (p->conf == CONF_BUFIO) {
 		alen = OUPTRMASK(p, p->ou_rptr + p->ou_bufsz - 1 - p->ou_wptr);
-	} else {
+	}
+	else {
 		if (serial_out(p->conf, NULL, 0, &alen, 0) < 0) alen = 0;
 
 		/* シリアルポートの送信バッファサイズが 0 の場合、送信可能の
@@ -524,6 +531,11 @@ LOCAL	W	edit_input(CONSCB *p, B *buf, W max)
 		for (ep += len, i = cp; i < ep; i++) cons_putch(p, buf[i]);
 		for (cp += len; i > cp; i--) cons_putch(p, BS);
 	}
+#ifdef LFNONE			/* LFコード格納せずエコーバックもせず終了 */
+	if (p->lfnone) {
+		if (c == LF) c = 0;
+	}
+#endif		
 	if (c == LF) {
 		cons_putch(p, CR);	/* Echo back */
 		cons_putch(p, LF);
@@ -608,11 +620,19 @@ LOCAL	W	_console_in(W port, B *buf, UW len)
 		} else {
 			while (alen < len) {
 				if ((c = cons_getch(p)) < 0) break;
-#ifdef CR_DELETE
-				if (p->cr_delete != 0)
+#ifdef CRDROP
+				if (p->crdrop)
 					if (c == CR && p->input != RAW) continue;
 #endif				
 				if (c == CR && p->input != RAW) c = LF;
+#ifdef LFNONE		/* LFコード格納せずエコーバックもせず終了 */
+				if (p->lfnone) {
+					if (c == LF && p->input != RAW) {
+						buf[alen] = '\0';
+						break;
+					}
+				}
+#endif				
 				if (p->echo) {		/* Echo*/
 					if (c == LF && p->input != RAW)
 						cons_putch(p, CR);
@@ -718,9 +738,17 @@ LOCAL	W	_console_ctl(W port, W req, W arg)
 			break;
 		case 0x8e:
 			rtn = 0;	p->disable = arg;	break;
-#ifdef CR_DELETE
-		case 0x70:
-			rtn = 0;	p->cr_delete = arg;		break;
+#ifdef CRDROP
+		case CRDROP|GETCTL:
+			rtn = p->crdrop;		break;
+		case CRDROP:
+			rtn = 0;	p->crdrop = arg;	break;
+#endif			
+#ifdef LFNONE
+		case LFNONE|GETCTL:
+			rtn = p->lfnone;		break;
+		case LFNONE:
+			rtn = 0;	p->lfnone = arg;	break;
 #endif			
 		}
 		p->in_use--;		/* Use-count - -*/
@@ -845,7 +873,7 @@ static	union objname	name = {{ "con0" }};
 	conf = arg[1];
 	if (conf != CONF_BUFIO) {
 		/* Check the serial line port */
-		if (conf < 0 || serial_ctl(conf, -DN_RSMODE, &dmy)) return -1;
+		if (conf < 0 || serial_ctl(conf, -DN_RSMODE, (UW*)&dmy)) return -1;
 	}
 
 	if (new) {	/* New creation */
@@ -1073,7 +1101,7 @@ EXPORT	ER	console_startup( BOOL StartUp )
 	if ((n = tm_extsvc(0x04, 0, 0, 0)) >= 0) DebugPort = n;
 
 	/* Create the standard console port (#1 : debug console) */
-	arg[1] = _isDebugMode() ? DebugPort : CONF_BUFIO;
+	arg[1] = _isDebugMode() ? CONF_SERIAL(DebugPort) : CONF_BUFIO;
 	arg[2] = arg[3] = 0;
 	if (_console_conf(CS_CREATE, (UW*)arg) < E_OK && _isDebugMode()) {
 		/* The debug console is unusable. Therefore, It shall be
@@ -1085,24 +1113,23 @@ EXPORT	ER	console_startup( BOOL StartUp )
 	}
 
 	/* Create the standard console port (#2 : Serial#1) */
-	arg[1] = DebugPort;
+	arg[1] = CONF_SERIAL(DebugPort);
 	_console_conf(CS_CREATE, (UW*)arg);
 	last_port = SYS_PORTNO;
 
 	/* Initialize the standard console port */
-	_console_ctl(1, ECHO, 1);
-	_console_ctl(1, INPUT, EDIT);
-	_console_ctl(1, NEWLINE, 1);
+	_console_ctl(1, ECHO, 1);			/* エコーバックする */
+	_console_ctl(1, NEWLINE, 1);		/* 出力の \n->CR,LF 変換する */
 	_console_ctl(1, FLOWC, IXON | IXOFF);
+//	_console_ctl(1, INPUT, EDIT);		/* 基本出力しかしないので */
 ///	if (!_isDebugMode()) _console_ctl(1, 0x8e, 0x3);
 ///				/* Stop sending/receiving */
 
-#if 1
-	_console_ctl(2, ECHO, 1);
-	_console_ctl(2, INPUT, EDIT);
-	_console_ctl(2, NEWLINE, 1);
+	/* 標準RSポートの初期設定 */
+	_console_ctl(2, ECHO, 1);			/* エコーバックする */
+	_console_ctl(2, NEWLINE, 1);		/* 出力の \n->CR,LF 変換する */
 	_console_ctl(2, FLOWC, IXON | IXOFF);
-#endif
+	_console_ctl(2, INPUT, EDIT);
 
 	/* Register the subsystem :
 		Overwrite the registration in device common manager */
@@ -1115,8 +1142,9 @@ EXPORT	ER	console_startup( BOOL StartUp )
 #|History of "console_drv.c"
 #|--------------------------
 #|* 2018/09/29	[tef_em1d]用の"console_drv.c"を参考に作成。(By T.Yokobayashi)
-#|* 2018/10/10	CANONICAL入力モードではCRは無視する機能作成。(CR_DELETE)
+#|* 2018/10/10	CANONICAL入力モードではCRは無視する機能作成。(CRDROP)
 #|* 2018/10/17	console_in(),console_out()でbuf=NULLは入出力可能Byte数を返す。
 #|* 2018/12/17	タスクIDと標準ポートの関連付機能。(USE_PORT_TID)
+#|* 2019/11/09	LFをバッファ格納しない。エコーバックもしない。(LFNONE)
 #|
 */

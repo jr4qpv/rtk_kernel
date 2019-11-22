@@ -147,7 +147,7 @@ IMPORT W cons_conf(W req, UW *arg);
 #define CONF_SELF	(-1)	/* Self console				*/
 #define CONF_BUFIO	(-2)	/* Buffer IO				*/
 
-#if 0	/* [By T.Yokobayashi] */
+#if 1	/* [By T.Yokobayashi] */
 #define CONF_LBUFIO_0	(32)		/* LBUFCONS port #0			*/
 #define CONF_LBUFIO(n)	((n)+32)	/* LBUFCONS port #N			*/
 #endif	
