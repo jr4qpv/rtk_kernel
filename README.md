@@ -1,5 +1,5 @@
-yt-kernel
-==========
+rtk_kernel
+===========
 TRON Forum T-Kernel for Raspberry Pi and Renesas RZ/T1
 
 概要
@@ -30,18 +30,18 @@ Gitリポジトリ
 ---------------
 GitHubの下記URL。
 
-<https://github.com/jr4qpv/yt-kernel.git>
+<https://github.com/jr4qpv/rtk_kernel.git>
 
 
 サポートサイト
 ----------------
 下記URLで、ビルド手順や実行方法などの技術情報を逐次提供しているので、詳細はそちらをご覧ください。
 
-<https://www.yokoweb.net/dokuwiki/develop/yt-kernel/start>
+<https://www.yokoweb.net/dokuwiki/develop/rtk_kernel/start>
 
 ### 関連記事
 
-* [【T-Kernel】Raspberry Pi と Renesas RZ/T1 用の T-Kernel「yt-kernel」をGitHubに公開](https://www.yokoweb.net/2019/09/29/raspberrypi-rzt1-ytkernel-github/)
+* [【T-Kernel】Raspberry Pi と Renesas RZ/T1 用の T-Kernel「rtk_kernel」をGitHubに公開](https://www.yokoweb.net/2019/09/29/raspberrypi-rzt1-rtk_kernel-github/)
 
 対応機種
 ----------
@@ -75,7 +75,7 @@ GitHubの下記URL。
 |:-------------------------|:--------------------------|:---------------|
 | `README.md`              | 説明ファイル                | Markdownで記述   |
 | `TEF000-218-150401.pdf`  | ライセンス規約              | T-License2.1    |
-| `yt-kernel_distmark.png` | T-Kernelディストリビューションucode  |          |
+| `rtk_kernel_distmark.png` | T-Kernelディストリビューションucode  |          |
 | `tkernel_source/`        | T-Kenelソース本体フォルダ    | ポーティングしたもの  |
 | `doc/`                   | 関連ドキュメントフォルダ      |               |
 | `_misc/`                 | その他                     |               |
@@ -87,7 +87,7 @@ GitHubの下記URL。
 
 ビルド環境
 ----------
-作者が確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。コンパイル環境のインストール手順などは「[サポートサイト](https://www.yokoweb.net/dokuwiki/develop/yt-kernel/start)」を参照。
+作者が確認した環境。GCCのバージョンは多少異なっても大丈夫と思う。コンパイル環境のインストール手順などは「[サポートサイト](https://www.yokoweb.net/dokuwiki/develop/rtk_kernel/start)」を参照。
 
 #### 【Windows】
 * Windows10 Pro x64 ver1903
@@ -107,7 +107,7 @@ GitHubの下記URL。
 
 |環境変数  |説明                     |例            |
 |:--------|:-----------------------|:-------------|
-|BD       |T-Kernelソースのベースパス |`/C/work/yt-kernel/tkernel_source`  |
+|BD       |T-Kernelソースのベースパス |`/C/work/rtk_kernel/tkernel_source`  |
 |GNU_BD   |ARMコンパイラのベースパス   |`/C/Program Files (x86)/GNU Tools ARM Embedded/6 2017-q2-update` |
 
 仕様書
@@ -124,7 +124,7 @@ T-License2.1に従う。同梱ファイル `TEF000-218-150401.pdf` を参照。
 
 ディストリビューションucode
 ---------------------------
-T-Kernel再配布規約に従い、本ソフトウェアのディストリビューション番号は「`00070059`」。同梱ファイル `yt-kernel_distmark.png` を参照。
+T-Kernel再配布規約に従い、本ソフトウェアのディストリビューション番号は「`00070059`」。同梱ファイル `rtk_kernel_distmark.png` を参照。
 
 免責
 ----
@@ -133,7 +133,7 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 補足
 ----
 
-* 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結して、今後はこの「[yt-kernel](https://github.com/jr4qpv/yt-kernel)」に移行し更新していきます。
+* 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結して、今後はこの「[rtk_kernel](https://github.com/jr4qpv/rtk_kernel)」に移行し更新していきます。
 
 作者関連サイト
 ---------------
@@ -145,3 +145,4 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 来歴
 ----
 * 2019/09/28 r0.60公開
+* 2020/01/07 プロジェクト名を「yt-kernel」から「rtk_kernel」に変更

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="com.renesas.cdt.launch.dsf.gdbremote.launchConfigurationType">
 <stringAttribute key="com.renesas.cdt.core.additionalServerArgs" value=""/>
-<stringAttribute key="com.renesas.cdt.core.imageFileName" value="${workspace_loc:\yt-kernel\tkernel_source/monitor/tmmain/build/app_rzt1.debug/tmonitor}"/>
+<stringAttribute key="com.renesas.cdt.core.imageFileName" value="${workspace_loc:\rtk_kernel\tkernel_source/monitor/tmmain/build/app_rzt1.debug/tmonitor}"/>
 <stringAttribute key="com.renesas.cdt.core.initCommands" value=""/>
 <stringAttribute key="com.renesas.cdt.core.ipAddress" value="localhost"/>
 <stringAttribute key="com.renesas.cdt.core.jtagDeviceId" value="com.renesas.hardwaredebug.rz.jlink"/>
@@ -74,7 +74,7 @@
 <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="3"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="false"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
-<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="C:\work\tk-optsys\TK\yt-kernel\tkernel_source\monitor\tmmain\build\app_rzt1.debug\tmonitor"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="C:\work\tk-optsys\TK\rtk_kernel\tkernel_source\monitor\tmmain\build\app_rzt1.debug\tmonitor"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value=""/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
@@ -85,7 +85,7 @@
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="false"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
-<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="C:\work\tk-optsys\TK\yt-kernel\tkernel_source\monitor\tmmain\build\app_rzt1.debug\tmonitor"/>
+<stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="C:\work\tk-optsys\TK\rtk_kernel\tkernel_source\monitor\tmmain\build\app_rzt1.debug\tmonitor"/>
 <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value=""/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="false"/>
 <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForSymbols" value="false"/>
@@ -97,11 +97,11 @@
 <booleanAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN_SYMBOL" value="main"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="tkernel_source/monitor/tmmain/build/app_rzt1.debug/tmonitor"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="yt-kernel"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="rtk_kernel"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/yt-kernel"/>
+<listEntry value="/rtk_kernel"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>

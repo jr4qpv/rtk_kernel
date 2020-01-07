@@ -10,7 +10,7 @@ if [[ ! -v TC_KIND ]]; then
 fi
 
 export C_DRV=/C
-export PRJPATH=${C_DRV}/work/yT-Kernel
+export PRJPATH=${C_DRV}/work/rtk_kernel
 if [ -f ${PRJPATH}/_misc/etc/toolenv.sh ] ; then
   source ${PRJPATH}/_misc/etc/toolenv.sh
   alias gterm='${PRJPATH}/_misc/etc/msys2/gterm -l /dev/ttyS0 -b -x'

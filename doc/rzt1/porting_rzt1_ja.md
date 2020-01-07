@@ -21,17 +21,17 @@ Gitリポジトリ
 ---------------
 GitHubの下記URL。
 
-<https://github.com/jr4qpv/yt-kernel.git>
+<https://github.com/jr4qpv/rtk_kernel.git>
 
 サポートサイト
 ----------------
-「yt-kernel for Raspberry Pi」については、下記URLのサポートサイトで、ビルド手順や実行方法などの技術情報を逐次提供しているので、詳細はそちらをご覧ください。
+「rtk_kernel for Raspberry Pi」については、下記URLのサポートサイトで、ビルド手順や実行方法などの技術情報を逐次提供しているので、詳細はそちらをご覧ください。
 
-<https://www.yokoweb.net/dokuwiki/develop/yt-kernel/ytkernel-rzt1/start>
+<https://www.yokoweb.net/dokuwiki/develop/rtk_kernel/rtk_kernel-rzt1/start>
 
 ### 関連記事
 
-* [【T-Kernel】Raspberry Pi と Renesas RZ/T1 用の T-Kernel「yt-kernel」をGitHubに公開](https://www.yokoweb.net/2019/09/29/raspberrypi-rzt1-ytkernel-github/)
+* [【T-Kernel】Raspberry Pi と Renesas RZ/T1 用の T-Kernel「rtk_kernel」をGitHubに公開](https://www.yokoweb.net/2019/09/29/raspberrypi-rzt1-rtk_kernel-github/)
 
 免責
 ----
@@ -47,3 +47,4 @@ GitHubの下記URL。
 来歴
 ----
 * 2019/09/28 r0.60公開
+* 2020/01/07 プロジェクト名を「yt-kernel」から「rtk_kernel」に変更
