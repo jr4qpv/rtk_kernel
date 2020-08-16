@@ -4,7 +4,7 @@ if [ -z "$TFTP_SERVER" ]; then
   export TFTP_SERVER="localhost"
 fi
 
-DSTDIR="${USER}@${TFTP_SERVER}:/var/lib/tftpboot/"
+DSTDIR="${USER}@${TFTP_SERVER}:/srv/tftp/"
 
 echo "Copy to ${DSTDIR} from rpi_bcm283x/bin/ files."
 scp ${BD}/bin/rpi_bcm283x/tmonitor.bin ${DSTDIR}
