@@ -17,7 +17,7 @@
  */
 
 /*
- *	@(#)consio.h (sys) 2019/11/16
+ *	@(#)consio.h (sys) 2020/10/10
  *
  *	Console I/O
  */
@@ -141,6 +141,13 @@ IMPORT W cons_conf(W req, UW *arg);
 				/* arg[0] = port number		 IN/OUT	*/
 				/* arg[1] = configuration	    IN	*/
 
+#if 1	/* [By T.Yokobayashi] */
+#define CS_GETHIST	0x31U	/* Get history buffer address		*/
+				/* arg[0] = port number		    IN	*/
+				/* arg[1] = history buffer address  OUT	*/
+				/* arg[2] = history buffer size	    OUT	*/
+#endif
+
 /* Configuration */
 #define CONF_SERIAL_0	(0)	/* Serial port #0			*/
 #define CONF_SERIAL(n)	(n)	/* Serial port #N			*/
@@ -192,5 +199,6 @@ IMPORT ER console_ctl(W port, W req, W arg);
 #|* 2018/12/19	Add TSE_READOK,TSE_WRITEOK,TSE_ERROR,TSE_STATE define.
 #|* 2019/04/18	Add STSEVENT define.
 #|* 2019/11/16	Add CRDROP,LFNONE define.
+#|* 2020/10/10	Add CS_GETHIST define.
 #|
 */
