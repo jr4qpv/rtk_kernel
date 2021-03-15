@@ -10,6 +10,10 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/04.
  *
  *----------------------------------------------------------------------
+ *
+ *    Modified by T.Yokobayashi since 2021/03/15.
+ *
+ *----------------------------------------------------------------------
  */
 /*
  * This software package is available for use, modification, 
@@ -44,7 +48,7 @@
  */
 
 /*
- *	@(#)time.h
+ *	@(#)time.h (t2ex) 2021/03/15
  *
  */
 
@@ -57,7 +61,9 @@
 
 /* Calendar time */
 struct tm {
+#if 0	/* Modified by T.Yokobayashi */
 	int	tm_usec;	/* microseconds [0, 999999] */
+#endif	
 	int	tm_sec;		/* seconds [0, 60] */
 	int	tm_min;		/* minutes [0, 59] */
 	int	tm_hour;	/* hours [0, 23] */
@@ -67,6 +73,9 @@ struct tm {
 	int	tm_wday;	/* day of the week (0: Sunday) [0, 6] */
 	int	tm_yday;	/* day in the year */
 	int	tm_isdst;	/* daylight saving time (+: DST, 0: non-DST, -: unknown) */
+#if 1	/* Modified by T.Yokobayashi */
+	int	tm_usec;	/* microseconds [0, 999999] */
+#endif	
 };
 
 #ifdef __cplusplus
@@ -93,3 +102,10 @@ IMPORT	char	*strptime(const char *str, const char *format, struct tm *tm);
 #endif
 #endif /* _TIME_H_ */
 
+
+/*----------------------------------------------------------------------
+#|History of "time.h"
+#|-------------------
+#|* 2021/03/15	Moved tm_usec definition for compatibility with standard library
+#|
+*/
