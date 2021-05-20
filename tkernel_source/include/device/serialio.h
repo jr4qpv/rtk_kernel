@@ -13,7 +13,7 @@
  */
 
 /*
- *	serialio.h	Low-level serial I/O driver definition
+ *	serialio.h	Low-level serial I/O driver definition  2020/05/17
  */
 
 #ifndef	__DEVICE_SERIALIO_H__
@@ -44,6 +44,9 @@ typedef enum {
 #define	RSCTL_SET	0x00000000	/* Set the all signals */
 #define	RSCTL_ON	0xc0000000	/* Turn ON the specified signal */
 #define	RSCTL_OFF	0x80000000	/* Turn OFF the specified signal */
+#if 1	/* Modified by T.Yokobayashi */
+#define	RSCTL_GET	0x40000000	/* Get signal status */
+#endif	
 
 /*
  * Definition for interface library automatic creation (mkiflib)
@@ -66,3 +69,11 @@ IMPORT ER serial_ctl(W port, W kind, UW *arg);
 }
 #endif
 #endif /* __DEVICE_SERIALIO_H__ */
+
+
+/*----------------------------------------------------------------------
+#|History of "serialio.h"
+#|-----------------
+#|* 2021/05/17	Add RSCTL_GET define.
+#|
+*/
