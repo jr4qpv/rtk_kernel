@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)ssid.h (sys) 2021/03/15
+ *	@(#)ssid.h (sys) 2021/06/03
  *
  *	Subsystem ID and subsystem priority
  *
@@ -68,8 +68,8 @@
 #define OPTBIOS_PRI         10
 #define RZT1BIOS_SVC    33      /* RZT1 Board BIOS call   */
 #define RZT1BIOS_PRI        10
-#define LBUFCONS_SVC    34      /* Ling Buffer Console call */
-#define LBUFCONS_PRI        10
+#define APPBIOS_SVC     34      /* AP program BIOS call   */
+#define APPBIOS_PRI         10
 #define RFU1_SVC        35      /* Reserve for the future */
 #define RFU1_PRI            10
 #define RFU2_SVC        36      /* Reserve for the future */
@@ -88,7 +88,7 @@
 #|* 2018/07/24	Add DT_SVC,DT_PRI define.
 #|* 2018/07/19	Add RZT1BIOS_SVC,RZT1BIOS_PRI define.
 #|* 2018/07/24	Add DT_SVC,DT_PRI define.
-#|* 2018/10/09	Add LBUFCONS_SVC,LBUFCONS_PRI define.
 #|* 2021/03/15	Add RFU1_SVC,RFU1_PRI,RFU2_SVC,RFU2_PRI define.
+#|* 2021/06/03	Add APPBIOS_SVC,APPBIOS_PRI define.
 #|
 */
