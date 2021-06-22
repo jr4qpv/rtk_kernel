@@ -11,13 +11,13 @@
  *
  *----------------------------------------------------------------------
  *
- *    Modified by T.Yokobayashi at 2019/04/08.
+ *    Modified by T.Yokobayashi since 2019/04/08.
  *
  *----------------------------------------------------------------------
  */
 
 /*
- *	rs.h		Serial(RS-232C) driver definition  2019/04/08
+ *	rs.h		Serial(RS-232C) driver definition  2021/06/22
  */
 
 #ifndef __DEVICE_RS_H__
@@ -84,7 +84,8 @@ typedef	struct {
 	UW	FE:1;	/* Framing Error	*/
 	UW	OE:1;	/* Overrun Error	*/
 	UW	PE:1;	/* Parity Error		*/
-	UW	rsv2:2;
+	UW	TB:1;	/* TX BUSY, Modified by T.Yokobayashi */
+	UW	rsv2:1;
 	UW	XF:1;	/* Recv XOFF		*/
 	UW	BD:1;	/* Break Detect		*/
 	UW	DR:1;	/* Dataset Ready (DSR)	*/
@@ -98,7 +99,8 @@ typedef	struct {
 	UW	DR:1;	/* Dataset Ready (DSR)	*/
 	UW	BD:1;	/* Break Detect		*/
 	UW	XF:1;	/* Recv XOFF		*/
-	UW	rsv2:2;
+	UW	rsv2:1;
+	UW  TB:1;	/* TX BUSY, Modified by T.Yokobayashi */
 	UW	PE:1;	/* Parity Error		*/
 	UW	OE:1;	/* Overrun Error	*/
 	UW	FE:1;	/* Framing Error	*/
@@ -119,7 +121,8 @@ typedef	struct {
 	UW	FE:1;		/* Framing Error	*/
 	UW	OE:1;		/* Overrun Error	*/
 	UW	PE:1;		/* Parity Error		*/
-	UW	rsv2:2;
+	UW	TB:1;		/* TX BUSY, Modified by T.Yokobayashi */
+	UW	rsv2:1;
 	UW	XF:1;		/* Recv XOFF		*/
 	UW	BD:1;		/* Break Detect		*/
 	UW	DR:1;		/* Dataset Ready (DSR)	*/
@@ -133,7 +136,8 @@ typedef	struct {
 	UW	DR:1;		/* Dataset Ready (DSR)	*/
 	UW	BD:1;		/* Break Detect		*/
 	UW	XF:1;		/* Recv XOFF		*/
-	UW	rsv2:2;
+	UW	rsv2:1;
+	UW	TB:1;		/* TX BUSY, Modified by T.Yokobayashi */
 	UW	PE:1;		/* Parity Error		*/
 	UW	OE:1;		/* Overrun Error	*/
 	UW	FE:1;		/* Framing Error	*/
@@ -163,5 +167,6 @@ typedef struct {
 #|History of "rs.h"
 #|-----------------
 #|* 2019/04/08	Add DN_STSEVENT define.
+#|* 2021/06/22	Add TB bit define.
 #|
 */
