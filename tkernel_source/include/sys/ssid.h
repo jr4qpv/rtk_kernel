@@ -18,7 +18,7 @@
  */
 
 /*
- *	@(#)ssid.h (sys) 2021/06/03
+ *	@(#)ssid.h (sys) 2022/03/22
  *
  *	Subsystem ID and subsystem priority
  *
@@ -60,8 +60,10 @@
 
 #if 1	/* Modified by T.Yokobayashi */
 /*
- * OPT extension Subsystem (31 - 38)
+ * OPT extension Subsystem (30 - 38)
  */
+#define OPTCORE_SVC     30      /* OPT core BIOS call   */
+#define OPTCORE_PRI         10
 #define SYSCALLSIO_SVC	31		/* Newlib Syscalls I/O */
 #define SYSCALLSIO_PRI		2
 #define OPTBIOS_SVC     32      /* OPT System BIOS call   */
@@ -90,5 +92,6 @@
 #|* 2018/07/24	Add DT_SVC,DT_PRI define.
 #|* 2021/03/15	Add RFU1_SVC,RFU1_PRI,RFU2_SVC,RFU2_PRI define.
 #|* 2021/06/03	Add APPBIOS_SVC,APPBIOS_PRI define.
+#|* 2022/03/22	Add OPTCORE_SVC,OPTCORE_PRI define.
 #|
 */
