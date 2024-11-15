@@ -12,12 +12,11 @@ Tronフォーラム（<http://www.tron.org/ja/>）で下記公開のオープン
     - `2015/06/09  13:16  419,593 t2ex_source.tar.gz`
     - `2015/03/25  17:12  1,219,629 bsd_source.tar.gz`
 
-以前、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi)用に公開してた「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」の構成を見直し、RTOS(T-Kernel)部分のみを分離し独立させ保守性を向上。更に、ルネサスの[RZ/T1](https://www.renesas.com/jp/ja/products/microcontrollers-microprocessors/rz/rzt/rzt1.html)マイコン用のコードも同梱。
+以前、[Raspberry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi)用にテスト作成した構成を見直し、RTOS(T-Kernel)部分のみを分離し独立させ保守性を向上。更に、ルネサスの[RZ/T1](https://www.renesas.com/jp/ja/products/microcontrollers-microprocessors/rz/rzt/rzt1.html)マイコン用のコードも同梱。
 
 本プロジェクトを直接修正して利用する事もできるが、アプリプロジェクト内にGitサブモジュール機能でサブディレクトリとして登録して使う事を想定。
 
 T-Kernelに一緒にリンクして動かすサンプルアプリは同梱して動くようにしてある（T2EXの簡易シェル）。
-又、別プロジェクトで動かすサンプルアプリも公開していく。
 
 ### T2EXについて
 [T-Kernel 2.0 Extension (T2EX)](https://www.tron.org/ja/tron-project/what-is-t-kernel/t2ex/) は、T-Kernel にネットワーク機能などを追加する拡張モジュール。
@@ -129,11 +128,6 @@ T-Kernel再配布規約に従い、本ソフトウェアのディストリビュ
 免責
 ----
 本プログラムの使用にあたっては、使用者自身の責任で行ってください。作者は何の保証もしないし、本プログラムを利用した上で生じたいかなる障害や損害についても、作者は責任を負いません。
-
-補足
-----
-
-* 以前の「[rpi_t-kernel](https://github.com/jr4qpv/rpi_t-kernel)」は凍結して、今後はこの「[rtk_kernel](https://github.com/jr4qpv/rtk_kernel)」に移行し更新していきます。
 
 作者関連サイト
 ---------------
