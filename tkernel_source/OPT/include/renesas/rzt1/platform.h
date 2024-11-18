@@ -51,8 +51,7 @@ DEFINE YOUR SYSTEM - UNCOMMENT THE INCLUDE PATH FOR THE PLATFORM YOU ARE USING.
 #if   defined(__ICCARM__)
 #include <stdint.h>
 #include <stdbool.h>
-#endif
-#if ( defined(__CC_ARM) || defined(__ARMCC_VERSION) )
+#elif defined(__CC_ARM)
 #include <stdint.h>
 #include <stdbool.h>
 #else
@@ -93,6 +92,6 @@ MAKE SURE AT LEAST ONE PLATFORM WAS DEFINED - DO NOT EDIT BELOW THIS POINT
 /*----------------------------------------------------------------------
 #|History of "platform.h"
 #|-----------------------
-#|* 2018/03/31	__ARMCC_VERSIONの時の処理を追加(By T.Yokobayashi)
+#|* 2018/03/31	__CC_ARMの時の処理を追加(By T.Yokobayashi)
 #|
 */

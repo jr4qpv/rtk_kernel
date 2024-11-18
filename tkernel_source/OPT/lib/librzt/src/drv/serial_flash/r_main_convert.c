@@ -57,15 +57,17 @@ Typedef definitions
 /*******************************************************************************
 Macro definitions
 *******************************************************************************/
-#if defined(__ICCARM__)			/*--- OpenTK ? ---*/
+#if defined(__ICCARM__)			/*--- EWARM ? ---*/
   #define SPI_REGION_RAW			(2)
   #define SPI_REGION_MIRROR			(5)
-#elif defined(__ARMCC_VERSION)	/*--- eT-Kernel ? ---*/
+#elif defined(__CC_ARM)			/*--- ARMCC ? ---*/
   #define SPI_REGION_RAW			(0)
   #define SPI_REGION_MIRROR			(1)
-#else 							/*--- T-Kernel ---*/
+#elif defined(__GNUC__)			/*--- GCC ? ---*/
   #define SPI_REGION_RAW			(1)
   #define SPI_REGION_MIRROR			(3)
+#else
+#error Unsupported compiler.
 #endif
 
 #define SPI_ADDR_AREA 				(0x10000000)
@@ -321,7 +323,5 @@ static void invalid_icache_and_flush_btac(void)
 #|-----------------------------
 #|* 2016/04/08	Renesasの｢SPIBSC｣ｻﾝﾌﾟﾙｺｰﾄﾞから修正。(by T.Yokobayashi)
 #|* 2017/07/25	SPI_ADDR_MIRROR_AREA changed(bugfix)
-#|* 2017/11/06	eSOL BSP(Beta版)のREGION番号割当てに変更
-#|* 2018/06/16	OpenTK用のREGION番号割当に対応
 #|
 */
